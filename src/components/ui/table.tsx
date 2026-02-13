@@ -5,7 +5,7 @@ export const Table = React.forwardRef<
   HTMLTableElement,
   React.TableHTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="section-glass relative w-full overflow-auto rounded-2xl border border-border/70">
     <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
   </div>
 ));
@@ -15,7 +15,7 @@ export const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead ref={ref} className={cn("bg-white/70 [&_tr]:border-b", className)} {...props} />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -38,7 +38,7 @@ export const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "border-b border-border/70 transition-colors hover:bg-muted/40 data-[state=selected]:bg-muted",
       className
     )}
     {...props}
@@ -53,7 +53,7 @@ export const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground",
+      "h-12 px-4 text-left align-middle text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground",
       className
     )}
     {...props}

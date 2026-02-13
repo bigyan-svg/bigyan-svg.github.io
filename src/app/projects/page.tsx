@@ -50,7 +50,7 @@ export default async function ProjectsPage({
         description="Selected engineering projects with architecture notes and implementation details."
       />
       <section className="container pb-16">
-        <form className="mb-6 grid gap-3 rounded-xl border border-border bg-card p-4 md:grid-cols-4">
+        <form className="section-glass mb-6 grid gap-3 rounded-2xl border border-border/70 p-4 md:grid-cols-4">
           <Input defaultValue={q} name="q" placeholder="Search projects..." />
           <Select
             name="type"
@@ -78,7 +78,7 @@ export default async function ProjectsPage({
             <Button type="submit" className="w-full">
               Apply
             </Button>
-            <Link href="/projects" className="inline-flex h-10 items-center rounded-md border border-input px-4 text-sm">
+            <Link href="/projects" className="inline-flex h-10 items-center rounded-xl border border-input bg-white/70 px-4 text-sm backdrop-blur-sm transition hover:bg-white/90">
               Reset
             </Link>
           </div>

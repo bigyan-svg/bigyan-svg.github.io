@@ -10,14 +10,18 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isAdmin = pathname.startsWith("/admin");
 
   if (isAdmin) {
-    return <main>{children}</main>;
+    return (
+      <div className="admin-shell">
+        <main>{children}</main>
+      </div>
+    );
   }
 
   return (
-    <>
+    <div className="public-shell">
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

@@ -43,7 +43,7 @@ export default async function IdeasPage({ searchParams }: { searchParams: Search
         description="Short thoughts, experiments, and practical observations from day-to-day development."
       />
       <section className="container pb-16">
-        <form className="mb-6 grid gap-3 rounded-xl border border-border bg-card p-4 md:grid-cols-3">
+        <form className="section-glass mb-6 grid gap-3 rounded-2xl border border-border/70 p-4 md:grid-cols-3">
           <Input defaultValue={q} name="q" placeholder="Search ideas..." />
           <Select
             name="tag"
@@ -57,7 +57,7 @@ export default async function IdeasPage({ searchParams }: { searchParams: Search
             <Button type="submit" className="w-full">
               Apply
             </Button>
-            <Link href="/ideas" className="inline-flex h-10 items-center rounded-md border border-input px-4 text-sm">
+            <Link href="/ideas" className="inline-flex h-10 items-center rounded-xl border border-input bg-white/70 px-4 text-sm backdrop-blur-sm transition hover:bg-white/90">
               Reset
             </Link>
           </div>

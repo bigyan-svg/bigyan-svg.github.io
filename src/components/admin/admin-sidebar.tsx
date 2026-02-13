@@ -41,6 +41,11 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const isActive = (href: string) => {
+    if (href === "/admin") return pathname === "/admin";
+    return pathname.startsWith(href);
+  };
+
   const logout = async () => {
     try {
       const csrfToken = await getCsrfToken();
@@ -58,32 +63,38 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="w-full border-r border-border bg-card lg:w-64">
-      <div className="sticky top-0 flex h-screen flex-col">
-        <div className="border-b border-border px-4 py-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">CMS</p>
-          <h2 className="text-lg font-semibold">bigyan-svg admin</h2>
+    <aside className="relative z-10 w-full p-4 lg:w-72 lg:p-6">
+      <div className="section-glass flex h-full max-h-[calc(100vh-2rem)] flex-col rounded-3xl border border-border/70 shadow-[0_24px_44px_-34px_rgba(24,80,118,0.75)]">
+        <div className="border-b border-border/70 px-5 py-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">CMS</p>
+          <h2 className="text-xl font-semibold tracking-tight">bigyan-svg admin</h2>
+          <p className="mt-1 text-xs text-muted-foreground">Control your complete portfolio universe</p>
         </div>
+
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {links.map((link) => {
             const Icon = link.icon;
-            const active = pathname === link.href;
+            const active = isActive(link.href);
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-                  active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-[0_14px_24px_-18px_hsl(var(--primary)/0.95)]"
+                    : "text-muted-foreground hover:bg-white/80 hover:text-foreground"
                 )}
               >
-                <Icon className="size-4" />
+                <Icon className={cn("size-4", active ? "text-primary-foreground" : "text-primary")} />
                 {link.label}
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-border p-3">
+
+        <div className="border-t border-border/70 p-3">
           <Button variant="outline" className="w-full justify-start" onClick={logout}>
             <LogOut className="mr-2 size-4" />
             Logout

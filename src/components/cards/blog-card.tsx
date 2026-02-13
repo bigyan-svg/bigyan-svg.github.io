@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -17,15 +18,17 @@ type BlogCardProps = {
 
 export function BlogCard({ post }: BlogCardProps) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="shine-sweep overflow-hidden">
       {post.coverImage ? (
-        <Image
-          src={post.coverImage}
-          alt={post.title}
-          width={900}
-          height={520}
-          className="aspect-[16/9] w-full object-cover"
-        />
+        <div className="overflow-hidden">
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            width={900}
+            height={520}
+            className="aspect-[16/9] w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+          />
+        </div>
       ) : null}
       <CardHeader className="space-y-2">
         <div className="flex items-center gap-2">
@@ -47,8 +50,8 @@ export function BlogCard({ post }: BlogCardProps) {
             </Badge>
           ))}
         </div>
-        <Link className="text-sm font-medium text-primary hover:underline" href={`/blog/${post.slug}`}>
-          Read post →
+        <Link className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" href={`/blog/${post.slug}`}>
+          Read post <ArrowRight className="size-4" />
         </Link>
       </CardContent>
     </Card>

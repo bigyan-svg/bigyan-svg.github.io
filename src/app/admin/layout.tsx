@@ -13,6 +13,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const isLogin = pathname === "/admin/login";
   const [authorized, setAuthorized] = useState(isLogin);
   const [checking, setChecking] = useState(!isLogin);
+  const today = new Date().toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
 
   useEffect(() => {
     if (isLogin) {
@@ -54,7 +59,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   if (checking || !authorized) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="section-glass flex items-center gap-2 rounded-xl border border-border/70 px-4 py-3 text-sm text-muted-foreground">
           <Loader2 className="size-4 animate-spin" />
           Verifying admin session...
         </div>
@@ -63,13 +68,23 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 lg:flex">
+    <div className="min-h-screen bg-muted/35 lg:flex">
       <AdminSidebar />
-      <div className="flex-1">
-        <div className="border-b border-border bg-background px-6 py-4">
-          <p className="text-sm text-muted-foreground">Portfolio CMS Dashboard</p>
+      <div className="relative z-10 flex-1">
+        <div className="px-4 pb-0 pt-4 md:px-6">
+          <div className="section-glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/70 px-5 py-4 shadow-[0_20px_38px_-30px_rgba(26,82,119,0.75)]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Portfolio Control Center
+              </p>
+              <p className="text-sm font-medium text-foreground/90">Manage projects, media, blogs, and ideas</p>
+            </div>
+            <span className="rounded-full border border-border/70 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {today}
+            </span>
+          </div>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 md:p-6">{children}</div>
       </div>
     </div>
   );

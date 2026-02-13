@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -14,8 +15,9 @@ type IdeaCardProps = {
 
 export function IdeaCard({ idea }: IdeaCardProps) {
   const textContent = idea.content.replace(/<[^>]+>/g, "").slice(0, 160);
+
   return (
-    <Card>
+    <Card className="shine-sweep">
       <CardHeader className="space-y-2">
         <CardTitle className="text-lg">{idea.title}</CardTitle>
         {idea.publishAt ? (
@@ -33,8 +35,8 @@ export function IdeaCard({ idea }: IdeaCardProps) {
             </Badge>
           ))}
         </div>
-        <Link className="text-sm font-medium text-primary hover:underline" href={`/ideas/${idea.slug}`}>
-          Read idea →
+        <Link className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" href={`/ideas/${idea.slug}`}>
+          Read idea <ArrowRight className="size-4" />
         </Link>
       </CardContent>
     </Card>
