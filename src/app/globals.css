@@ -1,0 +1,63 @@
+@import "highlight.js/styles/github-dark.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 35 20% 97%;
+  --foreground: 220 26% 16%;
+  --muted: 35 30% 92%;
+  --muted-foreground: 220 10% 40%;
+  --border: 26 28% 85%;
+  --input: 26 28% 85%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 26% 16%;
+  --primary: 214 88% 39%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 24 59% 95%;
+  --secondary-foreground: 220 26% 16%;
+  --accent: 199 74% 90%;
+  --accent-foreground: 220 26% 16%;
+  --ring: 214 88% 39%;
+  --destructive: 0 78% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --radius: 0.65rem;
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  background-image:
+    radial-gradient(circle at 10% -10%, rgba(53, 136, 230, 0.16), transparent 46%),
+    radial-gradient(circle at 90% 0%, rgba(82, 196, 223, 0.18), transparent 40%);
+}
+
+.prose-content h1,
+.prose-content h2,
+.prose-content h3 {
+  @apply mt-8 font-semibold tracking-tight;
+}
+
+.prose-content p {
+  @apply mt-4 leading-7 text-foreground/90;
+}
+
+.prose-content ul {
+  @apply mt-4 list-disc pl-5;
+}
+
+.prose-content pre {
+  @apply mt-4 overflow-x-auto rounded-lg bg-zinc-900 p-4 text-zinc-100;
+}
+
+.prose-content code {
+  @apply rounded bg-muted px-1 py-0.5 text-sm;
+}
+
+.prose-content pre code {
+  @apply bg-transparent p-0 text-zinc-100;
+}

@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+enum TimelineType {
+  EXPERIENCE
+  EDUCATION
+}
+
+enum VideoSource {
+  YOUTUBE
+  VIMEO
+  UPLOADED
+}
+
+enum DocumentType {
+  RESUME
+  CERTIFICATE
+  REPORT
+  OTHER
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         Role           @default(ADMIN)
+  refreshTokens RefreshToken[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  level     Int
+  icon      String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TimelineItem {
+  id          String       @id @default(cuid())
+  type        TimelineType
+  title       String
+  organization String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean      @default(false)
+  description String
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  summary     String
+  content     String
+  coverImage  String?
+  repoUrl     String?
+  liveUrl     String?
+  projectType String
+  techStack   String[]      @default([])
+  featured    Boolean       @default(false)
+  views       Int           @default(0)
+  status      PublishStatus @default(DRAFT)
+  publishAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model BlogPost {
+  id         String        @id @default(cuid())
+  title      String
+  slug       String        @unique
+  excerpt    String
+  content    String
+  coverImage String?
+  category   String
+  tags       String[]      @default([])
+  views      Int           @default(0)
+  status     PublishStatus @default(DRAFT)
+  publishAt  DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model Idea {
+  id        String        @id @default(cuid())
+  title     String
+  slug      String        @unique
+  content   String
+  tags      String[]      @default([])
+  views     Int           @default(0)
+  status    PublishStatus @default(DRAFT)
+  publishAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model MediaPhoto {
+  id        String        @id @default(cuid())
+  title     String
+  slug      String        @unique
+  imageUrl  String
+  caption   String?
+  tags      String[]      @default([])
+  views     Int           @default(0)
+  status    PublishStatus @default(DRAFT)
+  publishAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model MediaVideo {
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  source       VideoSource
+  videoUrl     String
+  thumbnailUrl String?
+  caption      String?
+  tags         String[]      @default([])
+  views        Int           @default(0)
+  status       PublishStatus @default(DRAFT)
+  publishAt    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Document {
+  id        String        @id @default(cuid())
+  title     String
+  slug      String        @unique
+  fileUrl   String
+  docType   DocumentType
+  description String?
+  status    PublishStatus @default(DRAFT)
+  publishAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Resume {
+  id           String   @id @default(cuid())
+  fullName     String
+  headline     String
+  summary      String
+  email        String
+  phone        String?
+  location     String?
+  website      String?
+  github       String?
+  linkedin     String?
+  resumePdfUrl String?
+  skills       String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  ipAddress String?
+  isRead    Boolean  @default(false)
+  replied   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
