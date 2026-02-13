@@ -1,238 +1,163 @@
-# Bigyan Portfolio CMS (Next.js + Prisma + PostgreSQL)
+# Bigyan Portfolio CMS
 
-Production-ready full-stack personal portfolio + CMS for **Bigyan Sanjyal** (`bigyan-svg`), built with:
+Production-ready full-stack personal portfolio + CMS for **Bigyan Sanjyal** (`bigyan-svg`).
 
+## Stack
 - Next.js App Router + TypeScript
-- TailwindCSS + reusable shadcn-style UI components
+- TailwindCSS + reusable shadcn-style UI
 - Prisma ORM + PostgreSQL
-- JWT access token + rotating refresh tokens
-- Admin-only CMS dashboard
-- Cloudinary/local media uploads
-- SMTP contact notifications
+- JWT access token + refresh token rotation
+- TipTap rich text editor
+- Cloudinary (prod) + local uploads (dev fallback)
+- SMTP notifications for contact form
 
-## Architecture Decisions
-
-- **Backend choice:** Next.js Route Handlers (`src/app/api/**`) instead of separate Express service.
-  - Why: one deploy target (Vercel), less operational overhead, shared types/utilities.
-- **Rich text:** TipTap editor with HTML storage.
-  - Why: good editing UX, code block support, image embedding, easy sanitize/render pipeline.
-- **Storage:** Cloudinary in production, local `/public/uploads` fallback in development.
-  - Why: easy setup with strong CDN behavior while preserving local-dev ergonomics.
+## Architecture Decision
+- Backend is implemented with **Next.js Route Handlers** (`src/app/api/**`) instead of a separate Express server.
+- Reason: single deployment target, shared types/utilities, and simpler operations on Vercel.
 
 ## Features
-
-### Public Website
-- Home, About, Skills, Projects, Experience, Contact
-- Blog with category/tag/search/pagination
-- Ideas/Notes with tags/search/pagination
-- Media page:
-  - Photo grid + lightbox
-  - Video embeds (YouTube/Vimeo) + uploaded video support
-  - PDF/resources list + detail preview
-- Resume page (DB-driven + PDF download)
+- Public site: Home, About, Skills, Projects, Experience/Education, Contact
+- Blog: categories, tags, search, pagination, code highlighting
+- Ideas/Notes: mini-posts with tags, search, pagination
+- Media: photo lightbox, video embeds/uploads, PDF resources
+- Resume page: DB-driven profile + downloadable resume PDF
+- Admin CMS: secure login + CRUD for all portfolio content types
+- Draft / Published / Scheduled publishing workflow
+- Upload manager: images, PDFs, videos
+- Analytics: total items, views, messages
+- Contact inbox with reply-by-email action
 - SEO: metadata, `sitemap.xml`, `robots.txt`
-- Responsive, mobile-first UI
 
-### Admin Dashboard (CMS)
-- Secure admin login (JWT + refresh token rotation)
-- CRUD for:
-  - Projects
-  - Blog Posts
-  - Ideas
-  - Photos
-  - Videos
-  - Documents
-  - Skills
-  - Timeline
-  - Resume
-- Draft / Published / Scheduled status
-- Slug generator
-- Preview mode endpoint
-- Upload Manager (image/pdf/video)
-- Analytics page
-- Contact message inbox with mailto reply actions
-
-### Security
-- Admin route/API protection via middleware + server checks
-- CSRF protection for mutating/auth endpoints
-- Zod validation on API input
-- HTML sanitization for rich content
-- Auth + contact + view endpoint rate limiting
-- File type/size validation for uploads
+## Security
+- Admin route/API protection via middleware and server-side auth checks
+- CSRF protection on auth and mutating endpoints
+- Rate limiting on auth/contact/view endpoints
+- Zod validation on API inputs
+- Rich HTML sanitization for TipTap content
+- File upload type/size validation
 
 ## Project Structure
-
 ```text
 .
-├── .env.example
-├── middleware.ts
-├── package.json
-├── prisma
-│   ├── migrations
-│   │   └── 202602130001_init
-│   │       └── migration.sql
-│   ├── schema.prisma
-│   └── seed.ts
-└── src
-    ├── app
-    │   ├── admin
-    │   ├── api
-    │   ├── about
-    │   ├── blog
-    │   ├── contact
-    │   ├── experience
-    │   ├── ideas
-    │   ├── media
-    │   ├── projects
-    │   ├── resume
-    │   ├── skills
-    │   ├── globals.css
-    │   ├── layout.tsx
-    │   ├── loading.tsx
-    │   ├── not-found.tsx
-    │   ├── page.tsx
-    │   ├── robots.ts
-    │   └── sitemap.ts
-    ├── components
-    │   ├── admin
-    │   ├── cards
-    │   ├── common
-    │   ├── content
-    │   ├── forms
-    │   ├── layout
-    │   ├── media
-    │   └── ui
-    └── lib
-        ├── validators
-        └── *.ts
+|-- .env.example
+|-- .github/workflows
+|   |-- ci.yml
+|   `-- vercel-deploy.yml
+|-- middleware.ts
+|-- package.json
+|-- prisma
+|   |-- migrations
+|   |-- schema.prisma
+|   `-- seed.ts
+`-- src
+    |-- app
+    |-- components
+    `-- lib
 ```
 
 ## Setup (Windows PowerShell)
-
-1. Install Node.js 20+ and PostgreSQL (or Neon/Supabase DB URL).
-2. Copy env file:
+1. Copy env file:
    ```powershell
    Copy-Item .env.example .env
    ```
-3. Install dependencies:
+2. Install dependencies:
    ```powershell
    npm install
    ```
-4. Generate Prisma client:
+3. Generate Prisma client:
    ```powershell
    npm run prisma:generate
    ```
-5. Run migration:
+4. Run migration:
    ```powershell
    npm run prisma:migrate
    ```
-6. Seed sample data:
+5. Seed data:
    ```powershell
    npm run db:seed
    ```
-7. Start dev server:
+6. Start dev:
    ```powershell
    npm run dev
    ```
 
 ## Setup (Ubuntu)
-
-1. Install Node.js 20+ and PostgreSQL client tools.
-2. Copy env file:
+1. Copy env file:
    ```bash
    cp .env.example .env
    ```
-3. Install dependencies:
+2. Install and run:
    ```bash
    npm install
-   ```
-4. Prisma setup:
-   ```bash
    npm run prisma:generate
    npm run prisma:migrate
    npm run db:seed
-   ```
-5. Run app:
-   ```bash
    npm run dev
    ```
 
-## Useful Commands
-
+## Commands
 ```bash
-# Install deps
-npm install
-
-# Dev
 npm run dev
-
-# Build + start
 npm run build
 npm run start
-
-# Prisma
+npm run lint
+npm run typecheck
 npm run prisma:generate
 npm run prisma:migrate
 npm run prisma:deploy
 npm run db:seed
 ```
 
-## Environment Variables Explained
+## Environment Variables
+See `.env.example` for all values.
 
-- `DATABASE_URL`: PostgreSQL connection string for Prisma.
-- `JWT_ACCESS_SECRET`: secret for short-lived access JWT.
-- `JWT_REFRESH_SECRET`: reserved for refresh-token strategy configuration.
-- `ACCESS_TOKEN_EXPIRES_MINUTES`: access-token TTL.
-- `REFRESH_TOKEN_EXPIRES_DAYS`: refresh-token TTL.
-- `CSRF_SECRET`: HMAC signing secret for CSRF cookie token.
-- `PREVIEW_SECRET`: preview-mode access secret.
-- `SMTP_*`: SMTP config for contact notifications.
-- `CONTACT_TO_EMAIL`: inbox target for contact email notifications.
-- `CLOUDINARY_*`: cloud media storage credentials.
-- `MAX_IMAGE_MB`/`MAX_PDF_MB`/`MAX_VIDEO_MB`: upload limits.
-- `SEED_ADMIN_PASSWORD`: password for seeded admin user.
+Core variables:
+- `DATABASE_URL`
+- `NEXT_PUBLIC_APP_URL`
+- `JWT_ACCESS_SECRET`
+- `JWT_REFRESH_SECRET`
+- `CSRF_SECRET`
+- `PREVIEW_SECRET`
+- `SMTP_*`
+- `CLOUDINARY_*`
 
-## Deployment Guide
+## Deployment
 
-### 1) Database (Neon or Supabase)
-- Create PostgreSQL project.
-- Copy DB URL into `DATABASE_URL`.
-- Run `npm run prisma:deploy`.
+### Important hosting note
+This project is **full-stack** (uses API routes + PostgreSQL), so it should be deployed on **Vercel** (or another serverless/container platform), not GitHub Pages static hosting.
 
-### 2) Deploy to Vercel
-- Push repo to GitHub.
-- Import repo in Vercel.
-- Add all environment variables from `.env.example`.
-- Set `NEXT_PUBLIC_APP_URL` to production domain.
-- Deploy.
+### Vercel deployment
+1. Import this repo in Vercel.
+2. Add env variables from `.env.example`.
+3. Set production `NEXT_PUBLIC_APP_URL`.
+4. Run migrations:
+   ```bash
+   npm run prisma:deploy
+   ```
+5. Seed once:
+   ```bash
+   npm run db:seed
+   ```
 
-### 3) Post-Deploy
-- Run seed once against production DB:
-  - locally with prod `DATABASE_URL`, run `npm run db:seed`
-  - or run as one-time CI task.
-- Test:
-  - `/admin/login`
-  - upload manager
-  - contact form email notification
-  - sitemap/robots endpoints
+### GitHub Actions workflows
+This repo now includes:
+- `CI` workflow: lint + typecheck on push/PR.
+- `Deploy to Vercel` workflow: preview deploy for PR and production deploy for `main`.
 
-### 4) File Storage
-- **Recommended prod:** Cloudinary (set `CLOUDINARY_*`).
-- **Dev fallback:** local files saved under `public/uploads`.
+Required GitHub secrets:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Add them in:
+`GitHub Repo -> Settings -> Secrets and variables -> Actions`.
 
 ## Customization Checklist
-
-- [ ] Update your domain in `NEXT_PUBLIC_APP_URL`
+- [ ] Set your real app domain in `.env` and Vercel
 - [ ] Update metadata base URL in `src/app/layout.tsx`
-- [ ] Replace admin seed email/password
-- [ ] Update resume content in `/admin/resume`
-- [ ] Update About section copy
-- [ ] Add your real GitHub/LinkedIn/email links
-- [ ] Add project case studies in `/admin/projects`
-- [ ] Add blog categories/tags and posts in `/admin/blog-posts`
-- [ ] Add ideas in `/admin/ideas`
-- [ ] Upload media and documents from `/admin/uploads`
-- [ ] Configure SMTP for contact notifications
-- [ ] Configure Cloudinary for production uploads
-- [ ] Validate `sitemap.xml` and `robots.txt` in production
-My personal portfolio website showcasing projects, skills, and achievements.
+- [ ] Update admin seed password (`SEED_ADMIN_PASSWORD`)
+- [ ] Add your real name, bio, social links in `/admin/resume`
+- [ ] Add projects/blog/ideas/media from admin dashboard
+- [ ] Configure SMTP for contact email notifications
+- [ ] Configure Cloudinary for production media uploads
+- [ ] Verify `/sitemap.xml` and `/robots.txt` after deploy

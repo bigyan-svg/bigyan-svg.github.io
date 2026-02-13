@@ -35,3 +35,6 @@ pnpm-debug.log*
 # ide
 .idea
 .vscode
+
+# local helper output
+FULL_CODE_DUMP.md
