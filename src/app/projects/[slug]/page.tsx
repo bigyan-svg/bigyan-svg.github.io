@@ -45,7 +45,7 @@ export default async function ProjectDetailPage({ params }: Params) {
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{project.title}</h1>
           <p className="text-muted-foreground">{project.summary}</p>
           <div className="flex flex-wrap gap-2">
-            {project.techStack.map((tech) => (
+            {(project.techStack as string[]).map((tech: string) => (
               <Badge key={tech} variant="outline">
                 {tech}
               </Badge>

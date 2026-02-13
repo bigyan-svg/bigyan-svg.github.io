@@ -51,7 +51,7 @@ export default async function VideoDetailPage({ params }: Params) {
         {video.caption ? <p className="text-muted-foreground">{video.caption}</p> : null}
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary">{video.source}</Badge>
-          {video.tags.map((tag) => (
+          {(video.tags as string[]).map((tag: string) => (
             <Badge key={tag} variant="outline">
               #{tag}
             </Badge>

@@ -39,7 +39,7 @@ export default async function PhotoDetailPage({ params }: Params) {
         />
         {photo.caption ? <p className="text-muted-foreground">{photo.caption}</p> : null}
         <div className="flex flex-wrap gap-2">
-          {photo.tags.map((tag) => (
+          {(photo.tags as string[]).map((tag: string) => (
             <Badge key={tag} variant="outline">
               #{tag}
             </Badge>

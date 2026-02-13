@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { publishedFilter } from "@/lib/publish";
-import { listProjects } from "@/lib/public-data";
+import { getProjectFilterOptions, listProjects } from "@/lib/public-data";
 import { PageHeader } from "@/components/common/page-header";
 import { PaginationLinks } from "@/components/common/pagination-links";
 import { ProjectCard } from "@/components/cards/project-card";
@@ -29,23 +27,12 @@ export default async function ProjectsPage({
   const type = rawType === "all" ? "" : rawType;
   const page = Number(typeof params.page === "string" ? params.page : "1");
 
-  const [result, types, stacks] = await Promise.all([
+  const [result, filters] = await Promise.all([
     listProjects({ page, pageSize: 9, q: q || undefined, tech: tech || undefined, type: type || undefined }),
-    prisma.project.findMany({
-      where: publishedFilter(),
-      distinct: ["projectType"],
-      select: { projectType: true },
-      orderBy: { projectType: "asc" }
-    }),
-    prisma.project.findMany({
-      where: publishedFilter(),
-      select: { techStack: true }
-    })
+    getProjectFilterOptions()
   ]);
 
-  const techOptions = Array.from(
-    new Set(stacks.flatMap((item) => item.techStack).filter(Boolean))
-  ).sort((a, b) => a.localeCompare(b));
+  const techOptions = filters.tech;
 
   const buildHref = (targetPage: number) => {
     const query = new URLSearchParams();
@@ -70,9 +57,9 @@ export default async function ProjectsPage({
             defaultValue={type || "all"}
             options={[
               { label: "All Types", value: "all" },
-              ...types.map((item) => ({
-                label: item.projectType,
-                value: item.projectType
+              ...filters.types.map((item) => ({
+                label: item,
+                value: item
               }))
             ]}
           />

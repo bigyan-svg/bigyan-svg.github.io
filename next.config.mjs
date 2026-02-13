@@ -15,9 +15,6 @@ const nextConfig = {
         hostname: "i.ytimg.com"
       }
     ]
-  },
-  experimental: {
-    typedRoutes: true
   }
 };
 

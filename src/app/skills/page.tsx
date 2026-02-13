@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default async function SkillsPage() {
-  const skills = await getSkills();
-  const grouped = skills.reduce<Record<string, typeof skills>>((acc, skill) => {
+  const skills = (await getSkills()) as any[];
+  const grouped = skills.reduce<Record<string, any[]>>((acc, skill: any) => {
     if (!acc[skill.category]) {
       acc[skill.category] = [];
     }
@@ -25,13 +25,13 @@ export default async function SkillsPage() {
       />
       <section className="container pb-16">
         <div className="grid gap-6 md:grid-cols-2">
-          {Object.entries(grouped).map(([category, categorySkills]) => (
+          {Object.entries(grouped).map(([category, categorySkills]: [string, any[]]) => (
             <Card key={category}>
               <CardHeader>
                 <CardTitle>{category}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {categorySkills.map((skill) => (
+                {categorySkills.map((skill: any) => (
                   <div key={skill.id} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
                       <span>{skill.name}</span>

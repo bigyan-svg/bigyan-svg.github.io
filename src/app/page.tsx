@@ -93,7 +93,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
+          {(projects as any[]).map((project: any) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
@@ -107,7 +107,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
-          {blog.items.map((post) => (
+          {(blog.items as any[]).map((post: any) => (
             <BlogCard key={post.id} post={post} />
           ))}
         </div>
@@ -121,7 +121,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
-          {ideas.items.map((idea) => (
+          {(ideas.items as any[]).map((idea: any) => (
             <IdeaCard key={idea.id} idea={idea} />
           ))}
         </div>

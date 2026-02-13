@@ -33,7 +33,7 @@ export default async function ResumePage() {
               <div className="space-y-3">
                 <h3 className="font-medium">Skills</h3>
                 <div className="flex flex-wrap gap-2">
-                  {(resume?.skills || []).map((skill) => (
+                  {((resume?.skills || []) as string[]).map((skill: string) => (
                     <Badge key={skill} variant="outline">
                       {skill}
                     </Badge>
@@ -44,7 +44,7 @@ export default async function ResumePage() {
               <div className="space-y-3">
                 <h3 className="font-medium">Timeline</h3>
                 <div className="space-y-3">
-                  {timeline.map((item) => (
+                  {(timeline as any[]).map((item: any) => (
                     <div key={item.id} className="rounded-lg border border-border p-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <p className="font-medium">{item.title}</p>

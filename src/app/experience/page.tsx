@@ -20,7 +20,7 @@ export default async function ExperiencePage() {
       />
       <section className="container pb-16">
         <div className="space-y-4">
-          {timeline.map((item) => (
+          {(timeline as any[]).map((item: any) => (
             <Card key={item.id}>
               <CardContent className="space-y-3 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">

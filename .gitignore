@@ -39,3 +39,5 @@ pnpm-debug.log*
 
 # local helper output
 FULL_CODE_DUMP.md
+
+.vercel
