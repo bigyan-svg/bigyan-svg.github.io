@@ -32,31 +32,29 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Checkout
+      - name: Clone repository
         if: steps.verify.outputs.ready == 'true'
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        if: steps.verify.outputs.ready == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+        run: |
+          git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/${GITHUB_REPOSITORY}.git" repo
 
       - name: Install Vercel CLI
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
 
       - name: Build Project Artifacts
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel build --token="$VERCEL_TOKEN"
 
       - name: Deploy Preview
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel deploy --prebuilt --token="$VERCEL_TOKEN"
 
   production:
@@ -79,29 +77,27 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Checkout
+      - name: Clone repository
         if: steps.verify.outputs.ready == 'true'
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        if: steps.verify.outputs.ready == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+        run: |
+          git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/${GITHUB_REPOSITORY}.git" repo
 
       - name: Install Vercel CLI
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build Project Artifacts
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy Production
         if: steps.verify.outputs.ready == 'true'
+        working-directory: repo
         run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

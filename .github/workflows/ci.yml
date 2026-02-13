@@ -16,23 +16,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/${GITHUB_REPOSITORY}.git" repo
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+      - name: Node version
+        working-directory: repo
+        run: node -v
 
       - name: Install dependencies
+        working-directory: repo
         run: npm install
 
       - name: Generate Prisma Client
+        working-directory: repo
         run: npm run prisma:generate
 
       - name: Lint
+        working-directory: repo
         run: npm run lint
 
       - name: Typecheck
+        working-directory: repo
         run: npm run typecheck
