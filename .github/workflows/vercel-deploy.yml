@@ -14,60 +14,94 @@ concurrency:
 jobs:
   preview:
     name: Preview Deployment
-    if: github.event_name == 'pull_request' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
+      - name: Validate Vercel Secrets
+        id: verify
+        shell: bash
+        run: |
+          if [[ -z "$VERCEL_TOKEN" || -z "$VERCEL_ORG_ID" || -z "$VERCEL_PROJECT_ID" ]]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Missing Vercel secrets. Skipping preview deployment."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.verify.outputs.ready == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        if: steps.verify.outputs.ready == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
       - name: Install Vercel CLI
+        if: steps.verify.outputs.ready == 'true'
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
+        if: steps.verify.outputs.ready == 'true'
         run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
 
       - name: Build Project Artifacts
+        if: steps.verify.outputs.ready == 'true'
         run: vercel build --token="$VERCEL_TOKEN"
 
       - name: Deploy Preview
+        if: steps.verify.outputs.ready == 'true'
         run: vercel deploy --prebuilt --token="$VERCEL_TOKEN"
 
   production:
     name: Production Deployment
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
+      - name: Validate Vercel Secrets
+        id: verify
+        shell: bash
+        run: |
+          if [[ -z "$VERCEL_TOKEN" || -z "$VERCEL_ORG_ID" || -z "$VERCEL_PROJECT_ID" ]]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Missing Vercel secrets. Skipping production deployment."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.verify.outputs.ready == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        if: steps.verify.outputs.ready == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
       - name: Install Vercel CLI
+        if: steps.verify.outputs.ready == 'true'
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
+        if: steps.verify.outputs.ready == 'true'
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build Project Artifacts
+        if: steps.verify.outputs.ready == 'true'
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy Production
+        if: steps.verify.outputs.ready == 'true'
         run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

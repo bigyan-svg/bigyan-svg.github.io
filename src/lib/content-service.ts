@@ -184,7 +184,7 @@ export async function listContentEntity(args: {
 }
 
 export async function createContentEntity(entity: ContentEntity, payload: unknown) {
-  const data = parseEntityData(entity, payload);
+  const data = parseEntityData(entity, payload) as any;
 
   switch (entity) {
     case "projects":
@@ -249,7 +249,7 @@ export async function updateContentEntity(
   id: string,
   payload: unknown
 ) {
-  const data = parseEntityData(entity, payload);
+  const data = parseEntityData(entity, payload) as any;
 
   switch (entity) {
     case "projects":
