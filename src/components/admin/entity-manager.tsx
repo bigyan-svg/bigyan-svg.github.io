@@ -4,7 +4,7 @@ import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from "re
 import { toast } from "sonner";
 import { Loader2, Pencil, PlusCircle, RefreshCw, Trash2 } from "lucide-react";
 import { toSlug } from "@/lib/utils";
-import { getCsrfToken } from "@/lib/client-api";
+import { fetchWithAuthRetry, getCsrfToken } from "@/lib/client-api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -118,9 +118,7 @@ export function EntityManager({
         pageSize: "20",
         ...(query ? { q: query } : {})
       });
-      const response = await fetch(`/api/admin/${entity}?${search.toString()}`, {
-        credentials: "include"
-      });
+      const response = await fetchWithAuthRetry(`/api/admin/${entity}?${search.toString()}`);
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Failed to fetch");
 
@@ -172,9 +170,8 @@ export function EntityManager({
     setDeletingId(id);
     try {
       const csrfToken = await getCsrfToken();
-      const response = await fetch(`/api/admin/${entity}/${id}`, {
+      const response = await fetchWithAuthRetry(`/api/admin/${entity}/${id}`, {
         method: "DELETE",
-        credentials: "include",
         headers: {
           "x-csrf-token": csrfToken
         }
@@ -203,13 +200,12 @@ export function EntityManager({
         ...formData
       };
 
-      const response = await fetch(endpoint, {
+      const response = await fetchWithAuthRetry(endpoint, {
         method,
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": csrfToken
         },
-        credentials: "include",
         body: JSON.stringify(payload)
       });
       const json = await response.json();
@@ -233,11 +229,10 @@ export function EntityManager({
       payload.append("type", field.uploadType);
       payload.append("folder", entity);
 
-      const response = await fetch("/api/upload", {
+      const response = await fetchWithAuthRetry("/api/upload", {
         method: "POST",
         headers: { "x-csrf-token": csrfToken },
-        body: payload,
-        credentials: "include"
+        body: payload
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Upload failed");
@@ -257,9 +252,7 @@ export function EntityManager({
     try {
       const path = previewPath(formData);
       if (!path) return;
-      const response = await fetch(`/api/admin/preview-link?slug=${encodeURIComponent(path)}`, {
-        credentials: "include"
-      });
+      const response = await fetchWithAuthRetry(`/api/admin/preview-link?slug=${encodeURIComponent(path)}`);
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Failed to generate preview");
       window.open(json.data.previewUrl, "_blank", "noopener,noreferrer");

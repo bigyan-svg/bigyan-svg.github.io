@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Check, Mail, Trash2 } from "lucide-react";
-import { getCsrfToken } from "@/lib/client-api";
+import { fetchWithAuthRetry, getCsrfToken } from "@/lib/client-api";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,9 +32,7 @@ export function MessagesInbox() {
     setLoading(true);
     try {
       const params = new URLSearchParams(query ? { q: query } : {});
-      const response = await fetch(`/api/admin/messages?${params.toString()}`, {
-        credentials: "include"
-      });
+      const response = await fetchWithAuthRetry(`/api/admin/messages?${params.toString()}`);
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Failed to load messages");
       setItems(json.data.items);
@@ -53,14 +51,13 @@ export function MessagesInbox() {
   const updateMessage = async (id: string, payload: Partial<Message>) => {
     try {
       const csrfToken = await getCsrfToken();
-      const response = await fetch(`/api/admin/messages/${id}`, {
+      const response = await fetchWithAuthRetry(`/api/admin/messages/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": csrfToken
         },
-        body: JSON.stringify(payload),
-        credentials: "include"
+        body: JSON.stringify(payload)
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Update failed");
@@ -75,12 +72,11 @@ export function MessagesInbox() {
     if (!window.confirm("Delete this message?")) return;
     try {
       const csrfToken = await getCsrfToken();
-      const response = await fetch(`/api/admin/messages/${id}`, {
+      const response = await fetchWithAuthRetry(`/api/admin/messages/${id}`, {
         method: "DELETE",
         headers: {
           "x-csrf-token": csrfToken
-        },
-        credentials: "include"
+        }
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Delete failed");

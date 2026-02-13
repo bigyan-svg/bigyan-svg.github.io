@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
-import { getCsrfToken } from "@/lib/client-api";
+import { fetchWithAuthRetry, getCsrfToken } from "@/lib/client-api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,13 +31,12 @@ export function UploadManager() {
       formData.append("type", type);
       formData.append("folder", folder || "general");
 
-      const response = await fetch("/api/upload", {
+      const response = await fetchWithAuthRetry("/api/upload", {
         method: "POST",
         headers: {
           "x-csrf-token": csrfToken
         },
-        body: formData,
-        credentials: "include"
+        body: formData
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || "Upload failed");

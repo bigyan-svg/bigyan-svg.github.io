@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchWithAuthRetry } from "@/lib/client-api";
 
 type AnalyticsData = {
   totals: {
@@ -30,9 +31,7 @@ export function AnalyticsPanel() {
   useEffect(() => {
     const load = async () => {
       try {
-        const response = await fetch("/api/admin/analytics", {
-          credentials: "include"
-        });
+        const response = await fetchWithAuthRetry("/api/admin/analytics");
         const json = await response.json();
         if (!response.ok) throw new Error(json.error || "Failed to load analytics");
         setData(json.data);
