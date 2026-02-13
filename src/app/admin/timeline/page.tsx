@@ -1,3 +1,5 @@
+"use client";
+
 import { EntityManager } from "@/components/admin/entity-manager";
 
 const typeOptions = [
