@@ -1,11 +1,12 @@
-﻿"use client";
+"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { navItems, homeSectionItems } from "@/lib/data";
+import { navItems, homeSectionItems, profile } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { CommandPalette } from "@/components/common/command-palette";
@@ -43,8 +44,15 @@ export function Navbar() {
       <div className="container">
         <div className="rounded-2xl border border-border/70 bg-background/80 px-3 backdrop-blur-xl shadow-[0_22px_45px_-34px_rgba(13,29,64,0.36)]">
           <div className="flex h-14 items-center justify-between gap-3">
-            <Link href="/" className="text-sm font-semibold tracking-[0.2em] text-primary md:text-base">
-              BIGYAN-SVG
+            <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.2em] text-primary md:text-base">
+              <Image
+                src={profile.avatar}
+                alt={profile.name}
+                width={36}
+                height={36}
+                className="size-8 rounded-full border border-primary/25 object-cover md:size-9"
+              />
+              <span>BIGYAN-SVG</span>
             </Link>
 
             <nav className="hidden items-center gap-1 lg:flex">
@@ -90,7 +98,7 @@ export function Navbar() {
             </Button>
           </div>
 
-          <div className={cn("overflow-hidden transition-all lg:hidden", open ? "max-h-[380px] pb-3" : "max-h-0")}> 
+          <div className={cn("overflow-hidden transition-all lg:hidden", open ? "max-h-[380px] pb-3" : "max-h-0")}>
             <div className="grid gap-1 border-t border-border/60 pt-3">
               {navItems.map((item) => (
                 <Link
