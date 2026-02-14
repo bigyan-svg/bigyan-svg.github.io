@@ -1,4 +1,4 @@
-﻿export type SkillCategory = "Frontend" | "Backend" | "Cloud" | "Data" | "Tooling";
+export type SkillCategory = "Frontend" | "Backend" | "Cloud" | "Data" | "Tooling";
 
 export type Skill = {
   id: string;
@@ -73,9 +73,31 @@ export type PdfResource = {
   url: string;
 };
 
+export type Profile = {
+  name: string;
+  username: string;
+  role: string;
+  location: string;
+  email: string;
+  avatar: string;
+  heroImage: string;
+  aboutImage: string;
+  contactImage: string;
+  headline: string;
+  intro: string;
+  github: string;
+  linkedin: string;
+  resumeUrl: string;
+};
+
 export type NavItem = {
   label: string;
   href: string;
+};
+
+export type HomeSectionItem = {
+  id: string;
+  label: string;
 };
 
 export type CommandItem = {
@@ -83,4 +105,35 @@ export type CommandItem = {
   label: string;
   href: string;
   group: "Pages" | "Sections" | "Actions";
+};
+
+export type FrontendControls = {
+  showNavbarProfilePhoto: boolean;
+  showHeroAvatarChip: boolean;
+  showHeroStats: boolean;
+  showHomeAboutPreview: boolean;
+  showHomeSkillsPreview: boolean;
+  showHomeProjectsPreview: boolean;
+  showHomeBlogPreview: boolean;
+  showHomeContactPreview: boolean;
+  enableAnimatedBackground: boolean;
+  enablePageTransitions: boolean;
+  enableRevealAnimations: boolean;
+  enableCardTilt: boolean;
+  enableScrollProgress: boolean;
+  enableBackToTop: boolean;
+};
+
+export type PortfolioContent = {
+  profile: Profile;
+  navItems: NavItem[];
+  homeSectionItems: HomeSectionItem[];
+  skills: Skill[];
+  timeline: TimelineItem[];
+  projects: Project[];
+  blogPosts: BlogPost[];
+  photos: Photo[];
+  videos: Video[];
+  pdfResources: PdfResource[];
+  controls: FrontendControls;
 };

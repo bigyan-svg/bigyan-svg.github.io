@@ -1,13 +1,18 @@
-﻿import Link from "next/link";
+"use client";
+
+import Link from "next/link";
 import { Github, Linkedin, Mail } from "lucide-react";
-import { navItems, profile } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 
 export function Footer() {
+  const { content } = usePortfolioContent();
+  const { navItems, profile } = content;
+
   return (
     <footer className="mt-24 border-t border-border/60 bg-background/50 py-10">
       <div className="container grid gap-8 md:grid-cols-[1.2fr_1fr]">
         <div className="space-y-3">
-          <h2 className="text-xl font-semibold">Bigyan Sanjyal</h2>
+          <h2 className="text-xl font-semibold">{profile.name}</h2>
           <p className="max-w-md text-sm text-muted-foreground">
             Premium futuristic portfolio UI for recruiters, teams, and product leaders.
           </p>
@@ -36,7 +41,7 @@ export function Footer() {
         </div>
       </div>
       <div className="container mt-8 border-t border-border/60 pt-4 text-xs text-muted-foreground">
-        (c) {new Date().getFullYear()} Bigyan Sanjyal. Crafted with Next.js and Framer Motion.
+        (c) {new Date().getFullYear()} {profile.name}. Crafted with Next.js and Framer Motion.
       </div>
     </footer>
   );

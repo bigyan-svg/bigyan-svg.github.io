@@ -1,12 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { SectionHeading } from "@/components/common/section-heading";
 import { ContactForm } from "@/components/portfolio/contact-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { imageBlurDataUrl, profile } from "@/lib/data";
 
 export default function ContactPage() {
+  const {
+    content: { profile }
+  } = usePortfolioContent();
+
   return (
     <section className="container pb-20 pt-16">
       <SectionHeading
@@ -43,7 +50,7 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
             <div className="rounded-xl border border-border/60 bg-background/60 p-4">
-              <p className="font-semibold">Bigyan Sanjyal</p>
+              <p className="font-semibold">{profile.name}</p>
               <p className="text-muted-foreground">{profile.role}</p>
             </div>
 

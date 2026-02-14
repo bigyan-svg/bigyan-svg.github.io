@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { blogPosts } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { SectionHeading } from "@/components/common/section-heading";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -11,13 +11,16 @@ import { EmptyState } from "@/components/common/empty-state";
 import { SkeletonGrid } from "@/components/portfolio/skeleton-grid";
 
 export default function BlogPage() {
+  const {
+    content: { blogPosts }
+  } = usePortfolioContent();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [tag, setTag] = useState("all");
   const [loading, setLoading] = useState(false);
 
-  const tags = useMemo(() => ["all", ...Array.from(new Set(blogPosts.flatMap((post) => post.tags)))], []);
-  const categories = useMemo(() => ["all", ...Array.from(new Set(blogPosts.map((post) => post.category)))], []);
+  const tags = useMemo(() => ["all", ...Array.from(new Set(blogPosts.flatMap((post) => post.tags)))], [blogPosts]);
+  const categories = useMemo(() => ["all", ...Array.from(new Set(blogPosts.map((post) => post.category)))], [blogPosts]);
 
   useEffect(() => {
     setLoading(true);
@@ -37,7 +40,7 @@ export default function BlogPage() {
       const matchTag = tag === "all" || post.tags.includes(tag);
       return matchSearch && matchCategory && matchTag;
     });
-  }, [search, category, tag]);
+  }, [blogPosts, search, category, tag]);
 
   return (
     <section className="container pb-20 pt-16">

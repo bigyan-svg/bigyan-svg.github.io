@@ -1,21 +1,24 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { SectionHeading } from "@/components/common/section-heading";
 import { SkillsRadar } from "@/components/portfolio/skills-radar";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { skills } from "@/lib/data";
 import type { SkillCategory } from "@/lib/types";
 
 const categories: Array<SkillCategory | "All"> = ["All", "Frontend", "Backend", "Cloud", "Data", "Tooling"];
 
 export default function SkillsPage() {
+  const {
+    content: { skills }
+  } = usePortfolioContent();
   const [active, setActive] = useState<SkillCategory | "All">("All");
 
   const filtered = useMemo(
     () => (active === "All" ? skills : skills.filter((skill) => skill.category === active)),
-    [active]
+    [active, skills]
   );
 
   return (

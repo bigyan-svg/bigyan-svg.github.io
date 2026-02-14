@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { commandItems } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { cn } from "@/lib/utils";
 
 type GroupName = "Pages" | "Sections" | "Actions";
@@ -15,6 +15,7 @@ const groups: GroupName[] = ["Pages", "Sections", "Actions"];
 export function CommandPalette({ compact = false, className }: { compact?: boolean; className?: string }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { commandItems } = usePortfolioContent();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export function CommandPalette({ compact = false, className }: { compact?: boole
       group,
       items: commandItems.filter((item) => item.group === group)
     }));
-  }, []);
+  }, [commandItems]);
 
   const navigate = (href: string) => {
     const [path, hash] = href.split("#");

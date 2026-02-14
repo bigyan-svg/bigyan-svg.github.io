@@ -1,14 +1,14 @@
-﻿"use client";
+"use client";
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
-export function PageTransition({ children }: { children: ReactNode }) {
+export function PageTransition({ children, enabled = true }: { children: ReactNode; enabled?: boolean }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
 
-  if (reduceMotion) {
+  if (reduceMotion || !enabled) {
     return <>{children}</>;
   }
 

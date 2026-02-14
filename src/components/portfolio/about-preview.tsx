@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
-import { imageBlurDataUrl, profile, timeline } from "@/lib/data";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Reveal } from "@/components/effects/reveal";
 
 export function AboutPreview() {
+  const { content } = usePortfolioContent();
+  const { profile, timeline } = content;
+
   return (
     <section id="about-preview" className="container pt-20" data-home-section>
       <Reveal>

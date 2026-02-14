@@ -1,22 +1,31 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useMemo } from "react";
+import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { blogPosts, imageBlurDataUrl } from "@/lib/data";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
+import { EmptyState } from "@/components/common/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 
-export default async function BlogDetailPage({
-  params
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = blogPosts.find((item) => item.slug === slug);
+export default function BlogDetailPage() {
+  const params = useParams<{ slug: string }>();
+  const {
+    content: { blogPosts }
+  } = usePortfolioContent();
+  const slug = typeof params.slug === "string" ? params.slug : "";
+  const post = useMemo(() => blogPosts.find((item) => item.slug === slug), [blogPosts, slug]);
 
   if (!post) {
-    notFound();
+    return (
+      <section className="container pb-20 pt-16">
+        <EmptyState title="Blog post not found" description="This post was removed or the slug has changed." />
+      </section>
+    );
   }
 
   const blocks = post.content.split("```");

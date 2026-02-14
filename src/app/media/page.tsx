@@ -1,14 +1,21 @@
-﻿import Image from "next/image";
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, FileText, PlayCircle } from "lucide-react";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { SectionHeading } from "@/components/common/section-heading";
 import { MediaLightbox } from "@/components/portfolio/media-lightbox";
-import { videos, photos, pdfResources, imageBlurDataUrl } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 
 export default function MediaPage() {
+  const {
+    content: { videos, photos, pdfResources }
+  } = usePortfolioContent();
+
   return (
     <section className="container pb-20 pt-16">
       <SectionHeading

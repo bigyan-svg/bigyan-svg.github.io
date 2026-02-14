@@ -1,16 +1,20 @@
-﻿import type {
+import type {
   BlogPost,
   CommandItem,
+  FrontendControls,
+  HomeSectionItem,
   NavItem,
   PdfResource,
   Photo,
+  PortfolioContent,
+  Profile,
   Project,
   Skill,
   TimelineItem,
   Video
 } from "@/lib/types";
 
-export const profile = {
+export const profile: Profile = {
   name: "Bigyan Sanjyal",
   username: "bigyan-svg",
   role: "BE Computer Engineering Student",
@@ -43,34 +47,13 @@ export const navItems: NavItem[] = [
   { label: "Admin UI", href: "/admin" }
 ];
 
-export const homeSectionItems = [
+export const homeSectionItems: HomeSectionItem[] = [
   { id: "home", label: "Hero" },
   { id: "about-preview", label: "About Preview" },
   { id: "skills-preview", label: "Skills Snapshot" },
   { id: "projects-preview", label: "Projects Preview" },
   { id: "blog-preview", label: "Blog Preview" },
   { id: "contact-preview", label: "Contact CTA" }
-] as const;
-
-export const commandItems: CommandItem[] = [
-  ...navItems.map((item) => ({
-    id: `page-${item.href}`,
-    label: item.label,
-    href: item.href,
-    group: "Pages" as const
-  })),
-  ...homeSectionItems.map((item) => ({
-    id: `section-${item.id}`,
-    label: `Home: ${item.label}`,
-    href: `/#${item.id}`,
-    group: "Sections" as const
-  })),
-  {
-    id: "action-contact",
-    label: "Quick Contact",
-    href: "/contact",
-    group: "Actions"
-  }
 ];
 
 export const skills: Skill[] = [
@@ -449,11 +432,71 @@ export const pdfResources: PdfResource[] = [
   }
 ];
 
-export const siteStats = {
-  projects: projects.length,
-  skills: skills.length,
-  blogs: blogPosts.length
+export const controls: FrontendControls = {
+  showNavbarProfilePhoto: true,
+  showHeroAvatarChip: true,
+  showHeroStats: true,
+  showHomeAboutPreview: true,
+  showHomeSkillsPreview: true,
+  showHomeProjectsPreview: true,
+  showHomeBlogPreview: true,
+  showHomeContactPreview: true,
+  enableAnimatedBackground: true,
+  enablePageTransitions: true,
+  enableRevealAnimations: true,
+  enableCardTilt: true,
+  enableScrollProgress: true,
+  enableBackToTop: true
 };
+
+export const defaultPortfolioContent: PortfolioContent = {
+  profile,
+  navItems,
+  homeSectionItems,
+  skills,
+  timeline,
+  projects,
+  blogPosts,
+  photos,
+  videos,
+  pdfResources,
+  controls
+};
+
+export function buildCommandItems(items: NavItem[], sections: HomeSectionItem[]): CommandItem[] {
+  return [
+    ...items.map((item) => ({
+      id: `page-${item.href}`,
+      label: item.label,
+      href: item.href,
+      group: "Pages" as const
+    })),
+    ...sections.map((item) => ({
+      id: `section-${item.id}`,
+      label: `Home: ${item.label}`,
+      href: `/#${item.id}`,
+      group: "Sections" as const
+    })),
+    {
+      id: "action-contact",
+      label: "Quick Contact",
+      href: "/contact",
+      group: "Actions" as const
+    }
+  ];
+}
+
+export function buildSiteStats(currentProjects: Project[], currentSkills: Skill[], currentBlogs: BlogPost[]) {
+  return {
+    projects: currentProjects.length,
+    skills: currentSkills.length,
+    blogs: currentBlogs.length
+  };
+}
+
+export const commandItems = buildCommandItems(navItems, homeSectionItems);
+
+export const siteStats = buildSiteStats(projects, skills, blogPosts);
 
 export const imageBlurDataUrl =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIHZpZXdCb3g9JzAgMCAxNiAxNicgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cmVjdCB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIGZpbGw9JyNlZWYzZmYnLz48L3N2Zz4=";

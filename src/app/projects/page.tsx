@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { projects } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { SectionHeading } from "@/components/common/section-heading";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -11,6 +11,9 @@ import { EmptyState } from "@/components/common/empty-state";
 import { SkeletonGrid } from "@/components/portfolio/skeleton-grid";
 
 export default function ProjectsPage() {
+  const {
+    content: { projects }
+  } = usePortfolioContent();
   const [search, setSearch] = useState("");
   const [tech, setTech] = useState("all");
   const [type, setType] = useState("all");
@@ -20,7 +23,7 @@ export default function ProjectsPage() {
   const techOptions = useMemo(() => {
     const allTags = new Set(projects.flatMap((project) => project.tech));
     return ["all", ...Array.from(allTags)];
-  }, []);
+  }, [projects]);
 
   useEffect(() => {
     setLoading(true);
@@ -60,7 +63,7 @@ export default function ProjectsPage() {
     }
 
     return result;
-  }, [search, tech, type, sort]);
+  }, [projects, search, tech, type, sort]);
 
   return (
     <section className="container pb-20 pt-16">

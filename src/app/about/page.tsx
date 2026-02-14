@@ -1,10 +1,17 @@
+"use client";
+
 import Image from "next/image";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { SectionHeading } from "@/components/common/section-heading";
 import { Reveal } from "@/components/effects/reveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { imageBlurDataUrl, profile, timeline } from "@/lib/data";
 
 export default function AboutPage() {
+  const {
+    content: { profile, timeline }
+  } = usePortfolioContent();
+
   return (
     <section className="container pb-20 pt-16">
       <Reveal>

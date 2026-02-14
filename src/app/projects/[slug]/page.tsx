@@ -1,22 +1,32 @@
-﻿import Image from "next/image";
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useMemo } from "react";
+import { useParams } from "next/navigation";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
-import { projects, imageBlurDataUrl } from "@/lib/data";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
+import { EmptyState } from "@/components/common/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 
-export default async function ProjectDetailPage({
-  params
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const project = projects.find((item) => item.slug === slug);
+export default function ProjectDetailPage() {
+  const params = useParams<{ slug: string }>();
+  const {
+    content: { projects }
+  } = usePortfolioContent();
+
+  const slug = typeof params.slug === "string" ? params.slug : "";
+  const project = useMemo(() => projects.find((item) => item.slug === slug), [projects, slug]);
 
   if (!project) {
-    notFound();
+    return (
+      <section className="container pb-20 pt-16">
+        <EmptyState title="Project not found" description="This project was removed or the slug has changed." />
+      </section>
+    );
   }
 
   return (

@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { usePortfolioContent } from "@/components/content/content-provider";
 
 export function Reveal({
   children,
@@ -15,8 +16,11 @@ export function Reveal({
   className?: string;
 }) {
   const reduceMotion = useReducedMotion();
+  const {
+    content: { controls }
+  } = usePortfolioContent();
 
-  if (reduceMotion) {
+  if (reduceMotion || !controls.enableRevealAnimations) {
     return <div className={className}>{children}</div>;
   }
 

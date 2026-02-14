@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Download, Mail, Sparkles } from "lucide-react";
-import { imageBlurDataUrl, profile, siteStats } from "@/lib/data";
+import { imageBlurDataUrl } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { MagneticButton } from "@/components/effects/magnetic-button";
@@ -13,6 +14,8 @@ const headlineWords = ["Out-of-the-world", "Full-Stack", "Portfolio", "Experienc
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
+  const { content, siteStats } = usePortfolioContent();
+  const { profile, controls } = content;
 
   return (
     <section id="home" className="container pt-16 md:pt-24" data-home-section>
@@ -82,16 +85,18 @@ export function HeroSection() {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 
-              <div className="absolute right-3 top-3 flex items-center gap-2 rounded-full border border-white/35 bg-black/35 px-2 py-1 text-[11px] text-white backdrop-blur">
-                <Image
-                  src={profile.avatar}
-                  alt={profile.name}
-                  width={40}
-                  height={40}
-                  className="size-8 rounded-full object-cover"
-                />
-                <span className="hidden sm:inline">@{profile.username}</span>
-              </div>
+              {controls.showHeroAvatarChip ? (
+                <div className="absolute right-3 top-3 flex items-center gap-2 rounded-full border border-white/35 bg-black/35 px-2 py-1 text-[11px] text-white backdrop-blur">
+                  <Image
+                    src={profile.avatar}
+                    alt={profile.name}
+                    width={40}
+                    height={40}
+                    className="size-8 rounded-full object-cover"
+                  />
+                  <span className="hidden sm:inline">@{profile.username}</span>
+                </div>
+              ) : null}
 
               <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/20 bg-black/30 p-3 text-xs text-white backdrop-blur">
                 <p className="font-medium">{profile.name}</p>
@@ -99,11 +104,13 @@ export function HeroSection() {
               </div>
             </motion.div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
-              <StatBadge label="Projects" value={siteStats.projects} />
-              <StatBadge label="Skills" value={siteStats.skills} />
-              <StatBadge label="Blogs" value={siteStats.blogs} />
-            </div>
+            {controls.showHeroStats ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <StatBadge label="Projects" value={siteStats.projects} />
+                <StatBadge label="Skills" value={siteStats.skills} />
+                <StatBadge label="Blogs" value={siteStats.blogs} />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

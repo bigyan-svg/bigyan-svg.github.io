@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { navItems, homeSectionItems, profile } from "@/lib/data";
+import { usePortfolioContent } from "@/components/content/content-provider";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { CommandPalette } from "@/components/common/command-palette";
@@ -14,6 +14,20 @@ import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const pathname = usePathname();
+  const { content } = usePortfolioContent();
+  const { navItems, homeSectionItems, profile, controls } = content;
+  const visibleHomeSections = useMemo(
+    () =>
+      homeSectionItems.filter((section) => {
+        if (section.id === "about-preview" && !controls.showHomeAboutPreview) return false;
+        if (section.id === "skills-preview" && !controls.showHomeSkillsPreview) return false;
+        if (section.id === "projects-preview" && !controls.showHomeProjectsPreview) return false;
+        if (section.id === "blog-preview" && !controls.showHomeBlogPreview) return false;
+        if (section.id === "contact-preview" && !controls.showHomeContactPreview) return false;
+        return true;
+      }),
+    [controls.showHomeAboutPreview, controls.showHomeBlogPreview, controls.showHomeContactPreview, controls.showHomeProjectsPreview, controls.showHomeSkillsPreview, homeSectionItems]
+  );
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("home");
 
@@ -31,13 +45,13 @@ export function Navbar() {
       { threshold: 0.45 }
     );
 
-    homeSectionItems.forEach((section) => {
+    visibleHomeSections.forEach((section) => {
       const element = document.getElementById(section.id);
       if (element) observer.observe(element);
     });
 
     return () => observer.disconnect();
-  }, [pathname]);
+  }, [visibleHomeSections, pathname]);
 
   return (
     <header className="sticky top-3 z-40 px-3">
@@ -45,13 +59,15 @@ export function Navbar() {
         <div className="rounded-2xl border border-border/70 bg-background/80 px-3 backdrop-blur-xl shadow-[0_22px_45px_-34px_rgba(13,29,64,0.36)]">
           <div className="flex h-14 items-center justify-between gap-3">
             <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.2em] text-primary md:text-base">
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={36}
-                height={36}
-                className="size-8 rounded-full border border-primary/25 object-cover md:size-9"
-              />
+              {controls.showNavbarProfilePhoto ? (
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={36}
+                  height={36}
+                  className="size-8 rounded-full border border-primary/25 object-cover md:size-9"
+                />
+              ) : null}
               <span>BIGYAN-SVG</span>
             </Link>
 
@@ -124,7 +140,7 @@ export function Navbar() {
 
           {pathname === "/" ? (
             <div className="hidden items-center justify-center gap-2 border-t border-border/60 py-2 lg:flex">
-              {homeSectionItems.map((section) => (
+              {visibleHomeSections.map((section) => (
                 <div key={section.id} className="flex items-center gap-2">
                   <span
                     className={cn(
