@@ -1,8 +1,8 @@
 
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { type ChangeEvent, FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { Loader2, Pencil, Plus, Save, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { FrontendControls, HomeSectionItem, NavItem, Profile } from "@/lib/types";
@@ -1055,11 +1055,36 @@ export function AdminShellPreview() {
                 <Field label="Location" value={profileForm.location} onChange={(value) => setProfileForm((prev) => ({ ...prev, location: value }))} />
                 <Field label="GitHub" value={profileForm.github} onChange={(value) => setProfileForm((prev) => ({ ...prev, github: value }))} />
                 <Field label="LinkedIn" value={profileForm.linkedin} onChange={(value) => setProfileForm((prev) => ({ ...prev, linkedin: value }))} />
-                <Field label="Resume URL" value={profileForm.resumeUrl} onChange={(value) => setProfileForm((prev) => ({ ...prev, resumeUrl: value }))} />
-                <Field label="Avatar URL" value={profileForm.avatar} onChange={(value) => setProfileForm((prev) => ({ ...prev, avatar: value }))} />
-                <Field label="Hero Image" value={profileForm.heroImage} onChange={(value) => setProfileForm((prev) => ({ ...prev, heroImage: value }))} />
-                <Field label="About Image" value={profileForm.aboutImage} onChange={(value) => setProfileForm((prev) => ({ ...prev, aboutImage: value }))} />
-                <Field label="Contact Image" value={profileForm.contactImage} onChange={(value) => setProfileForm((prev) => ({ ...prev, contactImage: value }))} />
+                <Field
+                  label="Resume URL"
+                  value={profileForm.resumeUrl}
+                  onChange={(value) => setProfileForm((prev) => ({ ...prev, resumeUrl: value }))}
+                  upload={{ kind: "pdf" }}
+                />
+                <Field
+                  label="Avatar URL"
+                  value={profileForm.avatar}
+                  onChange={(value) => setProfileForm((prev) => ({ ...prev, avatar: value }))}
+                  upload={{ kind: "image" }}
+                />
+                <Field
+                  label="Hero Image"
+                  value={profileForm.heroImage}
+                  onChange={(value) => setProfileForm((prev) => ({ ...prev, heroImage: value }))}
+                  upload={{ kind: "image" }}
+                />
+                <Field
+                  label="About Image"
+                  value={profileForm.aboutImage}
+                  onChange={(value) => setProfileForm((prev) => ({ ...prev, aboutImage: value }))}
+                  upload={{ kind: "image" }}
+                />
+                <Field
+                  label="Contact Image"
+                  value={profileForm.contactImage}
+                  onChange={(value) => setProfileForm((prev) => ({ ...prev, contactImage: value }))}
+                  upload={{ kind: "image" }}
+                />
               </div>
 
               <div className="space-y-2">
@@ -1153,7 +1178,12 @@ export function AdminShellPreview() {
               />
               <Field label="Project Type" value={projectForm.projectType} onChange={(value) => setProjectForm((prev) => ({ ...prev, projectType: value }))} />
               <Field label="Tech Stack (comma separated)" value={projectForm.techStack} onChange={(value) => setProjectForm((prev) => ({ ...prev, techStack: value }))} />
-              <Field label="Cover Image URL" value={projectForm.coverImage} onChange={(value) => setProjectForm((prev) => ({ ...prev, coverImage: value }))} />
+              <Field
+                label="Cover Image URL"
+                value={projectForm.coverImage}
+                onChange={(value) => setProjectForm((prev) => ({ ...prev, coverImage: value }))}
+                upload={{ kind: "image" }}
+              />
               <Field label="Repository URL" value={projectForm.repoUrl} onChange={(value) => setProjectForm((prev) => ({ ...prev, repoUrl: value }))} />
               <Field label="Live URL" value={projectForm.liveUrl} onChange={(value) => setProjectForm((prev) => ({ ...prev, liveUrl: value }))} />
               <Field
@@ -1218,7 +1248,12 @@ export function AdminShellPreview() {
               <SlugField value={blogForm.slug} title={blogForm.title} onChange={(value) => setBlogForm((prev) => ({ ...prev, slug: value }))} />
               <Field label="Category" value={blogForm.category} onChange={(value) => setBlogForm((prev) => ({ ...prev, category: value }))} />
               <Field label="Tags (comma separated)" value={blogForm.tags} onChange={(value) => setBlogForm((prev) => ({ ...prev, tags: value }))} />
-              <Field label="Cover Image URL" value={blogForm.coverImage} onChange={(value) => setBlogForm((prev) => ({ ...prev, coverImage: value }))} />
+              <Field
+                label="Cover Image URL"
+                value={blogForm.coverImage}
+                onChange={(value) => setBlogForm((prev) => ({ ...prev, coverImage: value }))}
+                upload={{ kind: "image" }}
+              />
               <Field
                 label="Publish At"
                 value={blogForm.publishAt}
@@ -1382,7 +1417,12 @@ export function AdminShellPreview() {
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Title" value={photoForm.title} onChange={(value) => setPhotoForm((prev) => ({ ...prev, title: value }))} />
               <SlugField value={photoForm.slug} title={photoForm.title} onChange={(value) => setPhotoForm((prev) => ({ ...prev, slug: value }))} />
-              <Field label="Image URL" value={photoForm.imageUrl} onChange={(value) => setPhotoForm((prev) => ({ ...prev, imageUrl: value }))} />
+              <Field
+                label="Image URL"
+                value={photoForm.imageUrl}
+                onChange={(value) => setPhotoForm((prev) => ({ ...prev, imageUrl: value }))}
+                upload={{ kind: "image" }}
+              />
               <Field label="Tags (comma separated)" value={photoForm.tags} onChange={(value) => setPhotoForm((prev) => ({ ...prev, tags: value }))} />
               <Field
                 label="Publish At"
@@ -1440,8 +1480,18 @@ export function AdminShellPreview() {
                   ]}
                 />
               </div>
-              <Field label="Video URL" value={videoForm.videoUrl} onChange={(value) => setVideoForm((prev) => ({ ...prev, videoUrl: value }))} />
-              <Field label="Thumbnail URL" value={videoForm.thumbnailUrl} onChange={(value) => setVideoForm((prev) => ({ ...prev, thumbnailUrl: value }))} />
+              <Field
+                label="Video URL"
+                value={videoForm.videoUrl}
+                onChange={(value) => setVideoForm((prev) => ({ ...prev, videoUrl: value }))}
+                upload={{ kind: "video" }}
+              />
+              <Field
+                label="Thumbnail URL"
+                value={videoForm.thumbnailUrl}
+                onChange={(value) => setVideoForm((prev) => ({ ...prev, thumbnailUrl: value }))}
+                upload={{ kind: "image" }}
+              />
               <Field label="Tags (comma separated)" value={videoForm.tags} onChange={(value) => setVideoForm((prev) => ({ ...prev, tags: value }))} />
               <Field
                 label="Publish At"
@@ -1492,7 +1542,12 @@ export function AdminShellPreview() {
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Title" value={documentForm.title} onChange={(value) => setDocumentForm((prev) => ({ ...prev, title: value }))} />
               <SlugField value={documentForm.slug} title={documentForm.title} onChange={(value) => setDocumentForm((prev) => ({ ...prev, slug: value }))} />
-              <Field label="File URL" value={documentForm.fileUrl} onChange={(value) => setDocumentForm((prev) => ({ ...prev, fileUrl: value }))} />
+              <Field
+                label="File URL"
+                value={documentForm.fileUrl}
+                onChange={(value) => setDocumentForm((prev) => ({ ...prev, fileUrl: value }))}
+                upload={{ kind: "pdf" }}
+              />
               <div className="space-y-2">
                 <Label>Document Type</Label>
                 <Select
@@ -1625,17 +1680,84 @@ function Field({
   label,
   value,
   onChange,
-  type = "text"
+  type = "text",
+  upload
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   type?: string;
+  upload?: {
+    kind: "image" | "video" | "pdf";
+    accept?: string;
+  };
 }) {
+  const inputId = useId();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const acceptMap: Record<"image" | "video" | "pdf", string> = {
+    image: "image/jpeg,image/png,image/webp,image/gif",
+    video: "video/mp4,video/webm,video/quicktime",
+    pdf: "application/pdf"
+  };
+
+  const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !upload) return;
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("kind", upload.kind);
+
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData
+      });
+      const json = (await response.json().catch(() => ({}))) as { message?: string; url?: string };
+
+      if (!response.ok || !json.url) {
+        throw new Error(json.message || "Upload failed.");
+      }
+
+      onChange(json.url);
+      toast.success("File uploaded.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to upload file.");
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  };
+
   return (
     <div className="space-y-2">
-      <Label>{label}</Label>
-      <Input type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+      <Label htmlFor={inputId}>{label}</Label>
+      <div className="flex gap-2">
+        <Input id={inputId} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+        {upload ? (
+          <>
+            <input
+              ref={fileRef}
+              type="file"
+              accept={upload.accept || acceptMap[upload.kind]}
+              className="hidden"
+              onChange={onUpload}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+              {uploading ? "Uploading..." : "Upload"}
+            </Button>
+          </>
+        ) : null}
+      </div>
     </div>
   );
 }
