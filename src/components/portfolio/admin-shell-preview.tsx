@@ -2,8 +2,9 @@
 "use client";
 
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { Loader2, Pencil, Plus, Save, Trash2, Upload } from "lucide-react";
+import { FolderOpen, Loader2, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast } from "sonner";
 import type { FrontendControls, HomeSectionItem, NavItem, Profile } from "@/lib/types";
 import { slugify } from "@/lib/validators";
@@ -21,6 +22,15 @@ type PublishStatus = "DRAFT" | "PUBLISHED" | "SCHEDULED";
 type TimelineType = "EXPERIENCE" | "EDUCATION";
 type VideoSource = "YOUTUBE" | "VIMEO" | "UPLOADED";
 type DocumentType = "RESUME" | "CERTIFICATE" | "REPORT" | "OTHER";
+type UploadKind = "image" | "video" | "pdf";
+
+type MediaLibraryItem = {
+  id: string;
+  url: string;
+  kind: UploadKind;
+  name: string;
+  createdAt: string;
+};
 
 type ProjectEntity = {
   id: string;
@@ -1688,19 +1698,60 @@ function Field({
   onChange: (value: string) => void;
   type?: string;
   upload?: {
-    kind: "image" | "video" | "pdf";
+    kind: UploadKind;
     accept?: string;
   };
 }) {
   const inputId = useId();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryError, setLibraryError] = useState("");
+  const [libraryQuery, setLibraryQuery] = useState("");
+  const [libraryItems, setLibraryItems] = useState<MediaLibraryItem[]>([]);
 
-  const acceptMap: Record<"image" | "video" | "pdf", string> = {
+  const acceptMap: Record<UploadKind, string> = {
     image: "image/jpeg,image/png,image/webp,image/gif",
     video: "video/mp4,video/webm,video/quicktime",
     pdf: "application/pdf"
   };
+
+  const loadLibrary = useCallback(async () => {
+    if (!upload) return;
+
+    setLibraryLoading(true);
+    setLibraryError("");
+    try {
+      const response = await fetch(`/api/admin/media-library?kind=${encodeURIComponent(upload.kind)}`, {
+        cache: "no-store"
+      });
+      const json = (await response.json().catch(() => ({}))) as {
+        message?: string;
+        items?: MediaLibraryItem[];
+      };
+
+      if (!response.ok) {
+        throw new Error(json.message || "Unable to load media library.");
+      }
+
+      setLibraryItems(Array.isArray(json.items) ? json.items : []);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to load media library.";
+      setLibraryError(message);
+      toast.error(message);
+    } finally {
+      setLibraryLoading(false);
+    }
+  }, [upload]);
+
+  const filteredLibraryItems = useMemo(() => {
+    const query = libraryQuery.trim().toLowerCase();
+    if (!query) return libraryItems;
+    return libraryItems.filter(
+      (item) => item.name.toLowerCase().includes(query) || item.url.toLowerCase().includes(query)
+    );
+  }, [libraryItems, libraryQuery]);
 
   const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -1732,8 +1783,19 @@ function Field({
     }
   };
 
+  const openLibrary = () => {
+    setLibraryOpen(true);
+    void loadLibrary();
+  };
+
+  const selectLibraryItem = (item: MediaLibraryItem) => {
+    onChange(item.url);
+    setLibraryOpen(false);
+    toast.success("Media selected from library.");
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="relative space-y-2">
       <Label htmlFor={inputId}>{label}</Label>
       <div className="flex gap-2">
         <Input id={inputId} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
@@ -1743,21 +1805,100 @@ function Field({
               ref={fileRef}
               type="file"
               accept={upload.accept || acceptMap[upload.kind]}
-              className="hidden"
-              onChange={onUpload}
-            />
-            <Button
-              type="button"
+                className="hidden"
+                onChange={onUpload}
+              />
+              <Button
+                type="button"
               variant="outline"
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
             >
-              {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-              {uploading ? "Uploading..." : "Upload"}
-            </Button>
-          </>
-        ) : null}
+                {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+                {uploading ? "Uploading..." : "Upload"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={libraryOpen ? () => setLibraryOpen(false) : openLibrary}
+              >
+                {libraryLoading ? <Loader2 className="size-4 animate-spin" /> : <FolderOpen className="size-4" />}
+                {libraryOpen ? "Close" : "Library"}
+              </Button>
+            </>
+          ) : null}
       </div>
+
+      {upload && libraryOpen ? (
+        <div className="absolute z-30 mt-2 w-full rounded-xl border border-border/70 bg-background p-3 shadow-xl">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">
+              Media Library ({upload.kind})
+            </p>
+            <Button type="button" variant="ghost" size="sm" onClick={() => setLibraryOpen(false)}>
+              <X className="size-4" />
+            </Button>
+          </div>
+
+          <div className="relative mb-2">
+            <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={libraryQuery}
+              onChange={(event) => setLibraryQuery(event.target.value)}
+              placeholder="Search uploaded files..."
+              className="pl-8"
+            />
+          </div>
+
+          {libraryError ? (
+            <p className="rounded-md border border-destructive/40 bg-destructive/10 px-2 py-1 text-xs text-destructive">
+              {libraryError}
+            </p>
+          ) : null}
+
+          <div className="max-h-72 space-y-2 overflow-auto pr-1">
+            {libraryLoading ? (
+              <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
+                <Loader2 className="size-4 animate-spin" />
+                Loading uploads...
+              </div>
+            ) : null}
+
+            {!libraryLoading && filteredLibraryItems.length === 0 ? (
+              <p className="py-2 text-xs text-muted-foreground">No uploaded files found for this type.</p>
+            ) : null}
+
+            {!libraryLoading
+              ? filteredLibraryItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => selectLibraryItem(item)}
+                    className="flex w-full items-center gap-3 rounded-lg border border-border/60 bg-background/60 p-2 text-left transition hover:border-primary/60 hover:bg-primary/5"
+                  >
+                    {upload.kind === "image" ? (
+                      <Image
+                        src={item.url}
+                        alt={item.name}
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 rounded-md border border-border/60 object-cover"
+                      />
+                    ) : (
+                      <div className="grid h-12 w-12 place-items-center rounded-md border border-border/60 bg-muted text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                        {item.kind}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-medium">{item.name}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">{item.url}</p>
+                    </div>
+                  </button>
+                ))
+              : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
