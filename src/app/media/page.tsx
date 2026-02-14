@@ -57,14 +57,23 @@ export default function MediaPage() {
                     <Badge variant="secondary">{video.platform}</Badge>
                     <span className="text-xs text-muted-foreground">{video.duration}</span>
                   </div>
-                  <iframe
-                    title={video.title}
-                    src={video.url}
-                    className="aspect-video w-full rounded-xl border border-border/60"
-                    loading="lazy"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
+                  {video.platform === "Uploaded" ? (
+                    <video
+                      controls
+                      preload="metadata"
+                      className="aspect-video w-full rounded-xl border border-border/60 bg-black"
+                      src={video.url}
+                    />
+                  ) : (
+                    <iframe
+                      title={video.title}
+                      src={video.url}
+                      className="aspect-video w-full rounded-xl border border-border/60"
+                      loading="lazy"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  )}
                 </CardContent>
               </Card>
             ))}

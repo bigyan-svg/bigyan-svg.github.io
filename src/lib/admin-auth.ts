@@ -19,8 +19,7 @@ function getSecret() {
 
 export function getAdminCredentials() {
   return {
-    email: (process.env.ADMIN_LOGIN_EMAIL || "bigyansanjyal56@gmail.com").trim().toLowerCase(),
-    password: process.env.ADMIN_LOGIN_PASSWORD || "#Bigyan123"
+    email: (process.env.ADMIN_LOGIN_EMAIL || "bigyansanjyal56@gmail.com").trim().toLowerCase()
   };
 }
 

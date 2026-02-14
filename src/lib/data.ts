@@ -43,8 +43,7 @@ export const navItems: NavItem[] = [
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
   { label: "Media", href: "/media" },
-  { label: "Contact", href: "/contact" },
-  { label: "Admin UI", href: "/admin" }
+  { label: "Contact", href: "/contact" }
 ];
 
 export const homeSectionItems: HomeSectionItem[] = [

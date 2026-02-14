@@ -2,14 +2,8 @@
 
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import {
-  buildCommandItems,
-  buildSiteStats,
-  defaultPortfolioContent
-} from "@/lib/data";
+import { buildCommandItems, buildSiteStats, defaultPortfolioContent } from "@/lib/data";
 import type { CommandItem, PortfolioContent } from "@/lib/types";
-
-const STORAGE_KEY = "bigyan-portfolio-content-v1";
 
 const profileSchema = z.object({
   name: z.string().min(1),
@@ -91,13 +85,13 @@ const photoSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   image: z.string().min(1),
-  caption: z.string().min(1)
+  caption: z.string()
 });
 
 const videoSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  platform: z.enum(["YouTube", "Vimeo"]),
+  platform: z.enum(["YouTube", "Vimeo", "Uploaded"]),
   url: z.string().min(1),
   thumbnail: z.string().min(1),
   duration: z.string().min(1)
@@ -106,8 +100,8 @@ const videoSchema = z.object({
 const pdfSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  type: z.enum(["Resume", "Certificate", "Report"]),
-  description: z.string().min(1),
+  type: z.enum(["Resume", "Certificate", "Report", "Other"]),
+  description: z.string(),
   url: z.string().min(1)
 });
 
@@ -142,11 +136,6 @@ const portfolioContentSchema = z.object({
   controls: controlsSchema
 });
 
-type ApplyResult = {
-  ok: boolean;
-  error?: string;
-};
-
 type ContentContextValue = {
   content: PortfolioContent;
   hydrated: boolean;
@@ -157,10 +146,8 @@ type ContentContextValue = {
     skills: number;
     blogs: number;
   };
+  refreshContent: (scope?: "public" | "admin") => Promise<void>;
   setContent: (next: PortfolioContent | ((prev: PortfolioContent) => PortfolioContent)) => void;
-  resetContent: () => void;
-  applyJson: (value: string) => ApplyResult;
-  exportJson: () => string;
 };
 
 const ContentContext = createContext<ContentContextValue | null>(null);
@@ -169,19 +156,35 @@ function cloneDefaults(): PortfolioContent {
   return JSON.parse(JSON.stringify(defaultPortfolioContent)) as PortfolioContent;
 }
 
-function parseContent(input: unknown): ApplyResult & { data?: PortfolioContent } {
+function parseContent(input: unknown): PortfolioContent | null {
   const parsed = portfolioContentSchema.safeParse(input);
-  if (!parsed.success) {
-    const issue = parsed.error.issues[0];
-    return { ok: false, error: `${issue.path.join(".") || "content"}: ${issue.message}` };
-  }
-  return { ok: true, data: parsed.data };
+  return parsed.success ? parsed.data : null;
 }
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContentState] = useState<PortfolioContent>(() => cloneDefaults());
   const [hydrated, setHydrated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const refreshContent = useCallback(async (scope?: "public" | "admin") => {
+    const targetScope = scope === "admin" ? "admin" : "public";
+    const response = await fetch(
+      targetScope === "admin" ? "/api/portfolio-content?scope=admin" : "/api/portfolio-content",
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to refresh content");
+    }
+
+    const json = (await response.json()) as { content?: unknown };
+    const parsed = parseContent(json.content);
+    if (!parsed) {
+      throw new Error("Invalid content response");
+    }
+
+    setContentState(parsed);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -197,26 +200,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         setIsAdmin(authenticated);
 
-        if (!authenticated) {
-          setHydrated(true);
-          return;
-        }
-
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          setHydrated(true);
-          return;
-        }
-
-        const parsedJson = JSON.parse(raw) as unknown;
-        const parsed = parseContent(parsedJson);
-        if (parsed.ok && parsed.data) {
-          setContentState(parsed.data);
-        }
+        await refreshContent(authenticated ? "admin" : "public");
       } catch {
-        localStorage.removeItem(STORAGE_KEY);
+        if (!active) return;
+        setContentState(cloneDefaults());
       } finally {
-        if (active) setHydrated(true);
+        if (active) {
+          setHydrated(true);
+        }
       }
     };
 
@@ -225,12 +216,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated || !isAdmin) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-  }, [content, hydrated, isAdmin]);
+  }, [refreshContent]);
 
   const setContent = useCallback(
     (next: PortfolioContent | ((prev: PortfolioContent) => PortfolioContent)) => {
@@ -242,40 +228,11 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     [isAdmin]
   );
 
-  const resetContent = useCallback(() => {
-    if (!isAdmin) return;
-    setContentState(cloneDefaults());
-  }, [isAdmin]);
-
-  const applyJson = useCallback(
-    (value: string): ApplyResult => {
-      if (!isAdmin) {
-        return { ok: false, error: "Unauthorized." };
-      }
-
-      try {
-        const parsedJson = JSON.parse(value) as unknown;
-        const parsed = parseContent(parsedJson);
-        if (!parsed.ok || !parsed.data) {
-          return { ok: false, error: parsed.error || "Invalid content payload." };
-        }
-        setContentState(parsed.data);
-        return { ok: true };
-      } catch {
-        return { ok: false, error: "JSON format is invalid." };
-      }
-    },
-    [isAdmin]
-  );
-
-  const exportJson = useCallback(() => {
-    return JSON.stringify(content, null, 2);
-  }, [content]);
-
   const commandItems = useMemo(
     () => buildCommandItems(content.navItems, content.homeSectionItems),
     [content.homeSectionItems, content.navItems]
   );
+
   const siteStats = useMemo(
     () => buildSiteStats(content.projects, content.skills, content.blogPosts),
     [content.blogPosts, content.projects, content.skills]
@@ -288,12 +245,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       isAdmin,
       commandItems,
       siteStats,
-      setContent,
-      resetContent,
-      applyJson,
-      exportJson
+      refreshContent,
+      setContent
     }),
-    [content, hydrated, isAdmin, commandItems, siteStats, setContent, resetContent, applyJson, exportJson]
+    [content, hydrated, isAdmin, commandItems, siteStats, refreshContent, setContent]
   );
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;

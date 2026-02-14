@@ -41,3 +41,4 @@ pnpm-debug.log*
 FULL_CODE_DUMP.md
 
 .vercel
+.env*.local

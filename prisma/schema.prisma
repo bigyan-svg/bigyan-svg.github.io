@@ -202,3 +202,14 @@ model ContactMessage {
   replied   Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model SiteConfig {
+  id               String   @id @default(cuid())
+  key              String   @unique @default("default")
+  profile          Json
+  controls         Json
+  navItems         Json
+  homeSectionItems Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

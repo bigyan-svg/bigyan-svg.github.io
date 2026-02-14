@@ -14,9 +14,9 @@ export default async function AdminPage() {
     <section className="container pb-20 pt-16">
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <SectionHeading
-          eyebrow="Admin UI"
-          title="Control Every Frontend Function"
-          description="Manage profile, sections, animations, and all content data from one dashboard."
+          eyebrow="Admin CMS"
+          title="Manage Live Portfolio Content"
+          description="Secure dashboard with real database persistence for profile, projects, blog, media, skills, and timeline."
         />
         <AdminLogoutButton />
       </div>

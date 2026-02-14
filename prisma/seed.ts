@@ -42,6 +42,119 @@ async function main() {
     });
   }
 
+  await prisma.siteConfig.upsert({
+    where: { key: "default" },
+    update: {
+      profile: {
+        name: "Bigyan Sanjyal",
+        username: "bigyan-svg",
+        role: "BE Computer Engineering Student",
+        location: "Kathmandu, Nepal",
+        email: "bigyansanjyal56@gmail.com",
+        avatar: "/images/bigyan.jpeg",
+        heroImage: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
+        aboutImage: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?auto=format&fit=crop&w=1400&q=80",
+        contactImage:
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
+        headline:
+          "Designing cinematic digital products with clean architecture, measurable performance, and human-first UX.",
+        intro:
+          "I build full-stack experiences that feel premium on the surface and reliable at the core. I care about speed, accessibility, and long-term maintainability.",
+        github: "https://github.com/bigyan-svg",
+        linkedin: "https://linkedin.com/in/bigyan-svg",
+        resumeUrl: SAMPLE_PDF_URL
+      },
+      controls: {
+        showNavbarProfilePhoto: true,
+        showHeroAvatarChip: true,
+        showHeroStats: true,
+        showHomeAboutPreview: true,
+        showHomeSkillsPreview: true,
+        showHomeProjectsPreview: true,
+        showHomeBlogPreview: true,
+        showHomeContactPreview: true,
+        enableAnimatedBackground: true,
+        enablePageTransitions: true,
+        enableRevealAnimations: true,
+        enableCardTilt: true,
+        enableScrollProgress: true,
+        enableBackToTop: true
+      },
+      navItems: [
+        { label: "Home", href: "/" },
+        { label: "About", href: "/about" },
+        { label: "Skills", href: "/skills" },
+        { label: "Projects", href: "/projects" },
+        { label: "Blog", href: "/blog" },
+        { label: "Media", href: "/media" },
+        { label: "Contact", href: "/contact" }
+      ],
+      homeSectionItems: [
+        { id: "home", label: "Hero" },
+        { id: "about-preview", label: "About Preview" },
+        { id: "skills-preview", label: "Skills Snapshot" },
+        { id: "projects-preview", label: "Projects Preview" },
+        { id: "blog-preview", label: "Blog Preview" },
+        { id: "contact-preview", label: "Contact CTA" }
+      ]
+    },
+    create: {
+      key: "default",
+      profile: {
+        name: "Bigyan Sanjyal",
+        username: "bigyan-svg",
+        role: "BE Computer Engineering Student",
+        location: "Kathmandu, Nepal",
+        email: "bigyansanjyal56@gmail.com",
+        avatar: "/images/bigyan.jpeg",
+        heroImage: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
+        aboutImage: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?auto=format&fit=crop&w=1400&q=80",
+        contactImage:
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
+        headline:
+          "Designing cinematic digital products with clean architecture, measurable performance, and human-first UX.",
+        intro:
+          "I build full-stack experiences that feel premium on the surface and reliable at the core. I care about speed, accessibility, and long-term maintainability.",
+        github: "https://github.com/bigyan-svg",
+        linkedin: "https://linkedin.com/in/bigyan-svg",
+        resumeUrl: SAMPLE_PDF_URL
+      },
+      controls: {
+        showNavbarProfilePhoto: true,
+        showHeroAvatarChip: true,
+        showHeroStats: true,
+        showHomeAboutPreview: true,
+        showHomeSkillsPreview: true,
+        showHomeProjectsPreview: true,
+        showHomeBlogPreview: true,
+        showHomeContactPreview: true,
+        enableAnimatedBackground: true,
+        enablePageTransitions: true,
+        enableRevealAnimations: true,
+        enableCardTilt: true,
+        enableScrollProgress: true,
+        enableBackToTop: true
+      },
+      navItems: [
+        { label: "Home", href: "/" },
+        { label: "About", href: "/about" },
+        { label: "Skills", href: "/skills" },
+        { label: "Projects", href: "/projects" },
+        { label: "Blog", href: "/blog" },
+        { label: "Media", href: "/media" },
+        { label: "Contact", href: "/contact" }
+      ],
+      homeSectionItems: [
+        { id: "home", label: "Hero" },
+        { id: "about-preview", label: "About Preview" },
+        { id: "skills-preview", label: "Skills Snapshot" },
+        { id: "projects-preview", label: "Projects Preview" },
+        { id: "blog-preview", label: "Blog Preview" },
+        { id: "contact-preview", label: "Contact CTA" }
+      ]
+    }
+  });
+
   await prisma.skill.createMany({
     data: [
       { name: "Next.js", category: "Frontend", level: 90, sortOrder: 1 },

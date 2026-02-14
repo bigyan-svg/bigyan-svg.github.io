@@ -1,6 +1,8 @@
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE, createAdminSessionToken, getAdminCredentials } from "@/lib/admin-auth";
+import { ADMIN_SESSION_COOKIE, createAdminSessionToken } from "@/lib/admin-auth";
+import { prisma } from "@/lib/prisma";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -17,13 +19,20 @@ export async function POST(request: Request) {
     }
 
     const { email, password } = parsed.data;
-    const creds = getAdminCredentials();
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
 
-    if (email.toLowerCase() !== creds.email || password !== creds.password) {
+    if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
     }
 
-    const token = await createAdminSessionToken(creds.email);
+    const passwordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordValid) {
+      return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
+    }
+
+    const token = await createAdminSessionToken(user.email);
     const response = NextResponse.json({ ok: true });
     response.cookies.set({
       name: ADMIN_SESSION_COOKIE,

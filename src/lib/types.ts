@@ -59,7 +59,7 @@ export type Photo = {
 export type Video = {
   id: string;
   title: string;
-  platform: "YouTube" | "Vimeo";
+  platform: "YouTube" | "Vimeo" | "Uploaded";
   url: string;
   thumbnail: string;
   duration: string;
@@ -68,7 +68,7 @@ export type Video = {
 export type PdfResource = {
   id: string;
   title: string;
-  type: "Resume" | "Certificate" | "Report";
+  type: "Resume" | "Certificate" | "Report" | "Other";
   description: string;
   url: string;
 };
