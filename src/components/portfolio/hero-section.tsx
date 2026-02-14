@@ -81,9 +81,21 @@ export function HeroSection() {
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+
+              <div className="absolute right-3 top-3 flex items-center gap-2 rounded-full border border-white/35 bg-black/35 px-2 py-1 text-[11px] text-white backdrop-blur">
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={40}
+                  height={40}
+                  className="size-8 rounded-full object-cover"
+                />
+                <span className="hidden sm:inline">@{profile.username}</span>
+              </div>
+
               <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/20 bg-black/30 p-3 text-xs text-white backdrop-blur">
                 <p className="font-medium">{profile.name}</p>
-                <p className="text-white/80">@{profile.username} • Product-first engineering</p>
+                <p className="text-white/80">@{profile.username} - Product-first engineering</p>
               </div>
             </motion.div>
 

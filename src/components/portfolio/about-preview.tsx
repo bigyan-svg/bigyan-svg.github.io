@@ -11,8 +11,8 @@ export function AboutPreview() {
           <Card className="overflow-hidden">
             <div className="relative">
               <Image
-                src={profile.aboutImage}
-                alt="Bigyan Sanjyal building full-stack projects"
+                src={profile.avatar}
+                alt={profile.name}
                 width={1200}
                 height={760}
                 placeholder="blur"
@@ -42,7 +42,7 @@ export function AboutPreview() {
                 <div key={item.id} className="rounded-xl border border-border/60 bg-background/50 p-4">
                   <p className="text-sm font-semibold">{item.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    {item.organization} • {item.start} - {item.end}
+                    {item.organization} - {item.start} - {item.end}
                   </p>
                   <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
                 </div>

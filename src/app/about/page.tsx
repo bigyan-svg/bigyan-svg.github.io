@@ -60,7 +60,7 @@ export default function AboutPage() {
                   <p className="text-xs uppercase tracking-[0.12em] text-primary">{item.type}</p>
                   <h3 className="mt-1 text-lg font-semibold">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {item.organization} • {item.start} - {item.end}
+                    {item.organization} - {item.start} - {item.end}
                   </p>
                   <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
                 </article>
