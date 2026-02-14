@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 54% 98%;
-  --foreground: 223 38% 13%;
-  --muted: 214 36% 93%;
-  --muted-foreground: 220 14% 38%;
-  --border: 214 30% 84%;
-  --input: 214 30% 84%;
+  --background: 210 60% 98%;
+  --foreground: 224 44% 12%;
+  --muted: 214 42% 93%;
+  --muted-foreground: 222 16% 38%;
+  --border: 214 28% 86%;
+  --input: 214 28% 86%;
   --card: 0 0% 100%;
-  --card-foreground: 223 38% 13%;
+  --card-foreground: 224 44% 12%;
   --primary: 199 88% 46%;
   --primary-foreground: 210 40% 98%;
   --secondary: 212 36% 94%;
@@ -21,6 +21,10 @@
   --destructive: 0 84% 54%;
   --destructive-foreground: 0 0% 100%;
   --radius: 1rem;
+
+  --shadow-sm: 0 1px 0 0 hsl(0 0% 100% / 0.72) inset, 0 10px 30px -22px rgba(12, 40, 90, 0.24);
+  --shadow-md: 0 1px 0 0 hsl(0 0% 100% / 0.7) inset, 0 24px 70px -48px rgba(12, 40, 90, 0.34);
+  --shadow-lg: 0 1px 0 0 hsl(0 0% 100% / 0.65) inset, 0 40px 120px -76px rgba(12, 40, 90, 0.4);
 }
 
 .dark {
@@ -41,6 +45,10 @@
   --ring: 191 92% 57%;
   --destructive: 0 78% 56%;
   --destructive-foreground: 0 0% 100%;
+
+  --shadow-sm: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset, 0 18px 40px -28px rgba(0, 0, 0, 0.7);
+  --shadow-md: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset, 0 30px 80px -56px rgba(0, 0, 0, 0.78);
+  --shadow-lg: 0 1px 0 0 rgba(255, 255, 255, 0.05) inset, 0 44px 130px -90px rgba(0, 0, 0, 0.82);
 }
 
 * {
@@ -64,11 +72,11 @@ body::before {
   pointer-events: none;
   z-index: -2;
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(71, 189, 255, 0.24), transparent 42%),
-    radial-gradient(circle at 88% 12%, rgba(105, 167, 255, 0.18), transparent 40%),
-    radial-gradient(circle at 76% 82%, rgba(72, 223, 189, 0.16), transparent 44%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(240, 248, 255, 0.72));
-  animation: aurora-float 18s ease-in-out infinite alternate;
+    radial-gradient(circle at 12% 18%, rgba(71, 189, 255, 0.18), transparent 48%),
+    radial-gradient(circle at 88% 12%, rgba(105, 167, 255, 0.14), transparent 44%),
+    radial-gradient(circle at 76% 82%, rgba(72, 223, 189, 0.12), transparent 50%),
+    linear-gradient(180deg, rgba(252, 254, 255, 0.96), rgba(243, 249, 255, 0.9));
+  animation: aurora-float 22s ease-in-out infinite alternate;
 }
 
 body::after {
@@ -77,7 +85,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.06;
+  opacity: 0.055;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M0 0h1v1H0zm24 18h1v1h-1zm54 31h1v1h-1zm84 9h1v1h-1zm-18 50h1v1h-1zm-63 26h1v1h-1zM30 102h1v1h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   animation: noise-shift 20s linear infinite;
 }
@@ -101,7 +109,7 @@ body::after {
 
 @layer utilities {
   .glass {
-    background: linear-gradient(135deg, hsl(var(--card) / 0.85), hsl(var(--card) / 0.55));
+    background: linear-gradient(135deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.6));
     backdrop-filter: blur(16px);
   }
 

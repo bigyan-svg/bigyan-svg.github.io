@@ -52,8 +52,8 @@ export function AnimatedBackground() {
         animate={reduceMotion ? undefined : { y: [0, -26, 0], x: [0, 12, 0] }}
         transition={reduceMotion ? undefined : { duration: 24, repeat: Infinity, ease: "easeInOut" }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_22%,rgba(255,255,255,0.84),transparent_52%),radial-gradient(circle_at_88%_12%,rgba(234,246,255,0.75),transparent_48%),linear-gradient(180deg,rgba(250,253,255,0.92),rgba(242,249,255,0.84))]" />
-      <div className="absolute inset-0 opacity-[0.1] [background-image:radial-gradient(rgba(48,123,255,0.45)_1px,transparent_1px)] [background-size:3px_3px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_22%,rgba(255,255,255,0.92),transparent_56%),radial-gradient(circle_at_88%_14%,rgba(234,246,255,0.78),transparent_52%),linear-gradient(180deg,rgba(252,254,255,0.94),rgba(242,249,255,0.86))]" />
+      <div className="absolute inset-0 opacity-[0.22] [background-image:linear-gradient(to_right,rgba(20,90,210,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,90,210,0.18)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(circle_at_50%_22%,black,transparent_72%)]" />
       {stars.map((star) => (
         <motion.span
           key={star.id}

@@ -11,7 +11,7 @@ export function Select({ options, className, ...props }: SelectProps) {
     <div className="relative">
       <select
         className={cn(
-          "h-10 w-full appearance-none rounded-xl border border-input/70 bg-background/70 px-3 pr-10 text-sm text-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "h-10 w-full appearance-none rounded-xl border border-input/70 bg-[linear-gradient(180deg,hsl(var(--background)/0.88),hsl(var(--background)/0.62))] px-3 pr-10 text-sm text-foreground shadow-[0_1px_0_0_hsl(0_0%_100%/0.6)_inset] ring-offset-background transition-all hover:border-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:shadow-[var(--shadow-sm)]",
           className
         )}
         {...props}

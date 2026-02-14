@@ -3,15 +3,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[0_12px_26px_-14px_hsl(var(--primary)/0.62)] hover:-translate-y-0.5 hover:bg-primary/90",
+          "bg-[linear-gradient(180deg,hsl(var(--primary)),hsl(var(--primary)/0.86))] text-primary-foreground shadow-[0_14px_30px_-18px_hsl(var(--primary)/0.55)] hover:-translate-y-0.5 hover:shadow-[0_22px_50px_-30px_hsl(var(--primary)/0.5)] active:translate-y-0",
         outline:
-          "border border-border/70 bg-background/70 backdrop-blur hover:-translate-y-0.5 hover:border-primary/40 hover:bg-background",
-        ghost: "hover:bg-muted/70 hover:text-foreground",
+          "border border-border/70 bg-[linear-gradient(180deg,hsl(var(--background)/0.86),hsl(var(--background)/0.64))] backdrop-blur hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[var(--shadow-sm)]",
+        ghost: "hover:bg-muted/60 hover:text-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90"
       },
