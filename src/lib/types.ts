@@ -42,6 +42,7 @@ export type BlogPost = {
   title: string;
   excerpt: string;
   content: string;
+  coverImage: string;
   category: "Engineering" | "Design" | "Career" | "Architecture";
   tags: string[];
   readingTime: string;

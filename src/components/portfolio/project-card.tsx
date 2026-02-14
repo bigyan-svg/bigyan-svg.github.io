@@ -24,7 +24,7 @@ export function ProjectCard({ project }: { project: Project }) {
             blurDataURL={imageBlurDataUrl}
             className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
           <Badge className="absolute left-3 top-3" variant="secondary">
             {project.type}
           </Badge>

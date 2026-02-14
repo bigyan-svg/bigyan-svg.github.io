@@ -54,6 +54,8 @@ export default function MediaPage() {
                     title={video.title}
                     src={video.url}
                     className="aspect-video w-full rounded-xl border border-border/60"
+                    loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
                 </CardContent>

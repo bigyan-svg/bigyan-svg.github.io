@@ -1,9 +1,10 @@
-﻿import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link";
 import { Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { SectionHeading } from "@/components/common/section-heading";
 import { ContactForm } from "@/components/portfolio/contact-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { profile } from "@/lib/data";
+import { imageBlurDataUrl, profile } from "@/lib/data";
 
 export default function ContactPage() {
   return (
@@ -24,7 +25,19 @@ export default function ContactPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden">
+          <div className="relative">
+            <Image
+              src={profile.contactImage}
+              alt="Team collaboration session"
+              width={1200}
+              height={760}
+              placeholder="blur"
+              blurDataURL={imageBlurDataUrl}
+              className="aspect-[16/10] w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          </div>
           <CardHeader>
             <CardTitle>Reach Me</CardTitle>
           </CardHeader>

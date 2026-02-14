@@ -1,7 +1,10 @@
-﻿"use client";
+"use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { BarChart3, Briefcase, FileText, MessageSquare, Settings, Sparkles } from "lucide-react";
+import { imageBlurDataUrl } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
@@ -50,7 +53,32 @@ export function AdminShellPreview() {
       </aside>
 
       <div className="space-y-4">
-        <Card>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { label: "Total Posts", value: "48" },
+            { label: "Messages", value: "16" },
+            { label: "Media Files", value: "112" }
+          ].map((item) => (
+            <motion.div whileHover={{ y: -3 }} key={item.label} className="rounded-xl border border-border/60 bg-background/70 p-4">
+              <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">{item.label}</p>
+              <p className="mt-2 text-2xl font-semibold">{item.value}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <Card className="overflow-hidden">
+          <div className="relative border-b border-border/60">
+            <Image
+              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1500&q=80"
+              alt="Admin dashboard preview"
+              width={1500}
+              height={640}
+              placeholder="blur"
+              blurDataURL={imageBlurDataUrl}
+              className="aspect-[16/5] w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/50 via-black/10 to-transparent" />
+          </div>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Content Table Template</CardTitle>
             <Badge variant="secondary">UI Only</Badge>

@@ -1,4 +1,5 @@
-﻿import { profile, timeline } from "@/lib/data";
+import Image from "next/image";
+import { imageBlurDataUrl, profile, timeline } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Reveal } from "@/components/effects/reveal";
 
@@ -7,7 +8,19 @@ export function AboutPreview() {
     <section id="about-preview" className="container pt-20" data-home-section>
       <Reveal>
         <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-          <Card>
+          <Card className="overflow-hidden">
+            <div className="relative">
+              <Image
+                src={profile.aboutImage}
+                alt="Bigyan Sanjyal building full-stack projects"
+                width={1200}
+                height={760}
+                placeholder="blur"
+                blurDataURL={imageBlurDataUrl}
+                className="aspect-[16/9] w-full object-cover"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+            </div>
             <CardHeader>
               <CardTitle>About {profile.name}</CardTitle>
             </CardHeader>

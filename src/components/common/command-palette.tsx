@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
@@ -12,8 +12,9 @@ type GroupName = "Pages" | "Sections" | "Actions";
 
 const groups: GroupName[] = ["Pages", "Sections", "Actions"];
 
-export function CommandPalette() {
+export function CommandPalette({ compact = false, className }: { compact?: boolean; className?: string }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -38,23 +39,49 @@ export function CommandPalette() {
     }));
   }, []);
 
+  const navigate = (href: string) => {
+    const [path, hash] = href.split("#");
+    const targetPath = path || "/";
+
+    if (hash && pathname === targetPath) {
+      const element = document.getElementById(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (window.location.hash !== `#${hash}`) {
+        window.history.pushState(null, "", `${targetPath}#${hash}`);
+      }
+      return;
+    }
+
+    router.push(href);
+  };
+
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hidden items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 py-2 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground md:inline-flex"
+        className={cn(
+          "items-center gap-2 rounded-xl border border-border/70 bg-background/70 px-3 py-2 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground",
+          compact ? "inline-flex h-10 w-10 justify-center px-0" : "inline-flex",
+          className
+        )}
         aria-label="Open command palette"
       >
         <Search className="size-3.5" />
-        Search
-        <span className="rounded-md border border-border/70 px-1.5 py-0.5 font-mono text-[10px]">Ctrl K</span>
+        {!compact ? (
+          <>
+            Search
+            <span className="rounded-md border border-border/70 px-1.5 py-0.5 font-mono text-[10px]">Ctrl K</span>
+          </>
+        ) : null}
       </button>
 
       <AnimatePresence>
         {open ? (
           <motion.div
-            className="fixed inset-0 z-[80] flex items-start justify-center bg-black/60 p-4 pt-20 backdrop-blur"
+            className="fixed inset-0 z-[80] flex items-start justify-center bg-black/50 p-4 pt-20 backdrop-blur"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -70,7 +97,7 @@ export function CommandPalette() {
             >
               <Command
                 label="Command palette"
-                className="overflow-hidden rounded-2xl border border-border/70 bg-background/95 shadow-[0_30px_80px_-45px_rgba(0,0,0,0.85)]"
+                className="overflow-hidden rounded-2xl border border-border/70 bg-background/95 shadow-[0_30px_80px_-45px_rgba(4,18,42,0.52)]"
               >
                 <div className="flex items-center border-b border-border/70 px-3">
                   <Search className="size-4 text-muted-foreground" />
@@ -96,7 +123,7 @@ export function CommandPalette() {
                           key={item.id}
                           value={item.label}
                           onSelect={() => {
-                            router.push(item.href);
+                            navigate(item.href);
                             setOpen(false);
                           }}
                           className={cn(

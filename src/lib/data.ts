@@ -16,6 +16,14 @@ export const profile = {
   role: "BE Computer Engineering Student",
   location: "Kathmandu, Nepal",
   email: "bigyan@example.com",
+  avatar:
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+  heroImage:
+    "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
+  aboutImage:
+    "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?auto=format&fit=crop&w=1400&q=80",
+  contactImage:
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80",
   headline:
     "Designing cinematic digital products with clean architecture, measurable performance, and human-first UX.",
   intro:
@@ -268,6 +276,8 @@ export const blogPosts: BlogPost[] = [
     tags: ["portfolio", "ux", "motion"],
     readingTime: "6 min read",
     publishedAt: "2026-01-18",
+    coverImage:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1400&q=80",
     content: `Great portfolios are not poster art. They are conversion journeys.
 
 Start with information clarity: role, outcomes, and credibility indicators should be visible in the first screen.
@@ -291,6 +301,8 @@ Recruiters skim first, dive later. Build for both.`
     tags: ["nextjs", "design-system", "frontend"],
     readingTime: "8 min read",
     publishedAt: "2025-12-01",
+    coverImage:
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1400&q=80",
     content:
       "Tokens are interface contracts. If your border radius, spacing, and colors are arbitrary per page, polish collapses as you scale."
   },
@@ -304,6 +316,8 @@ Recruiters skim first, dive later. Build for both.`
     tags: ["frontend", "backend", "architecture"],
     readingTime: "7 min read",
     publishedAt: "2025-10-14",
+    coverImage:
+      "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=1400&q=80",
     content:
       "Frontend architecture becomes robust when you model failure states first: empty, loading, partial data, and stale sessions."
   },
@@ -317,6 +331,8 @@ Recruiters skim first, dive later. Build for both.`
     tags: ["career", "internship", "growth"],
     readingTime: "5 min read",
     publishedAt: "2025-09-05",
+    coverImage:
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
     content:
       "The best feedback loop is production reality: user tickets, release pressure, and measurable outcomes."
   },
@@ -330,6 +346,8 @@ Recruiters skim first, dive later. Build for both.`
     tags: ["framer-motion", "performance"],
     readingTime: "9 min read",
     publishedAt: "2025-08-20",
+    coverImage:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
     content:
       "Animate transform and opacity first. Avoid expensive filters in large lists. Respect reduced motion by default."
   }
@@ -439,4 +457,4 @@ export const siteStats = {
 };
 
 export const imageBlurDataUrl =
-  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIHZpZXdCb3g9JzAgMCAxNiAxNicgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cmVjdCB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIGZpbGw9JyMxMDE0MjQnLz48L3N2Zz4=";
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIHZpZXdCb3g9JzAgMCAxNiAxNicgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cmVjdCB3aWR0aD0nMTYnIGhlaWdodD0nMTYnIGZpbGw9JyNlZWYzZmYnLz48L3N2Zz4=";

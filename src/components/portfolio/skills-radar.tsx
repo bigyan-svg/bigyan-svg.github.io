@@ -47,9 +47,9 @@ export function SkillsRadar({ items }: { items: Skill[] }) {
           <Tooltip
             contentStyle={{
               borderRadius: 12,
-              border: "1px solid rgba(148,163,184,0.35)",
-              background: "rgba(9,12,26,0.92)",
-              color: "white"
+              border: "1px solid hsl(var(--border))",
+              background: "hsl(var(--card) / 0.96)",
+              color: "hsl(var(--foreground))"
             }}
           />
         </RadarChart>

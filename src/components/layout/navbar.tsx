@@ -41,7 +41,7 @@ export function Navbar() {
   return (
     <header className="sticky top-3 z-40 px-3">
       <div className="container">
-        <div className="rounded-2xl border border-border/70 bg-background/75 px-3 backdrop-blur-xl shadow-[0_24px_45px_-38px_rgba(0,0,0,0.8)]">
+        <div className="rounded-2xl border border-border/70 bg-background/80 px-3 backdrop-blur-xl shadow-[0_22px_45px_-34px_rgba(13,29,64,0.36)]">
           <div className="flex h-14 items-center justify-between gap-3">
             <Link href="/" className="text-sm font-semibold tracking-[0.2em] text-primary md:text-base">
               BIGYAN-SVG
@@ -109,7 +109,7 @@ export function Navbar() {
               ))}
               <div className="mt-1 flex items-center justify-between px-1">
                 <ThemeToggle />
-                <CommandPalette />
+                <CommandPalette compact />
               </div>
             </div>
           </div>

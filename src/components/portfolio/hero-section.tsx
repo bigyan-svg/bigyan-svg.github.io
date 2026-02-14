@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Download, Mail, Sparkles } from "lucide-react";
-import { profile, siteStats } from "@/lib/data";
+import { imageBlurDataUrl, profile, siteStats } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { MagneticButton } from "@/components/effects/magnetic-button";
@@ -15,11 +16,11 @@ export function HeroSection() {
 
   return (
     <section id="home" className="container pt-16 md:pt-24" data-home-section>
-      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card/70 p-7 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.75)] backdrop-blur-xl md:p-12">
+      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card/72 p-7 shadow-[0_30px_70px_-38px_rgba(11,40,84,0.35)] backdrop-blur-xl md:p-12">
         <div className="absolute -left-16 -top-14 h-44 w-44 rounded-full bg-cyan-400/20 blur-3xl" />
-        <div className="absolute -bottom-20 -right-16 h-52 w-52 rounded-full bg-violet-500/15 blur-3xl" />
+        <div className="absolute -bottom-20 -right-16 h-52 w-52 rounded-full bg-blue-400/16 blur-3xl" />
 
-        <div className="relative grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+        <div className="relative grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div className="space-y-6">
             <Badge variant="secondary" className="inline-flex items-center gap-1 text-[10px]">
               <Sparkles className="size-3" />
@@ -63,10 +64,34 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <StatBadge label="Projects" value={siteStats.projects} />
-            <StatBadge label="Skills" value={siteStats.skills} />
-            <StatBadge label="Blogs" value={siteStats.blogs} />
+          <div className="space-y-4">
+            <motion.div
+              initial={reduceMotion ? undefined : { opacity: 0, y: 20 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ delay: reduceMotion ? 0 : 0.25, duration: 0.45 }}
+              className="relative overflow-hidden rounded-2xl border border-border/70"
+            >
+              <Image
+                src={profile.heroImage}
+                alt="Bigyan Sanjyal coding in a futuristic workspace"
+                width={1200}
+                height={840}
+                placeholder="blur"
+                blurDataURL={imageBlurDataUrl}
+                className="aspect-[4/3] w-full object-cover"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/20 bg-black/30 p-3 text-xs text-white backdrop-blur">
+                <p className="font-medium">{profile.name}</p>
+                <p className="text-white/80">@{profile.username} • Product-first engineering</p>
+              </div>
+            </motion.div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <StatBadge label="Projects" value={siteStats.projects} />
+              <StatBadge label="Skills" value={siteStats.skills} />
+              <StatBadge label="Blogs" value={siteStats.blogs} />
+            </div>
           </div>
         </div>
       </div>

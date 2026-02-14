@@ -1,7 +1,8 @@
-﻿import { SectionHeading } from "@/components/common/section-heading";
+import Image from "next/image";
+import { SectionHeading } from "@/components/common/section-heading";
 import { Reveal } from "@/components/effects/reveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { profile, timeline } from "@/lib/data";
+import { imageBlurDataUrl, profile, timeline } from "@/lib/data";
 
 export default function AboutPage() {
   return (
@@ -16,7 +17,19 @@ export default function AboutPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <Reveal delay={0.05}>
-          <Card>
+          <Card className="overflow-hidden">
+            <div className="relative">
+              <Image
+                src={profile.avatar}
+                alt={profile.name}
+                width={1000}
+                height={1100}
+                placeholder="blur"
+                blurDataURL={imageBlurDataUrl}
+                className="aspect-[4/5] w-full object-cover"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+            </div>
             <CardHeader>
               <CardTitle>{profile.name}</CardTitle>
               <p className="text-sm text-muted-foreground">{profile.role}</p>

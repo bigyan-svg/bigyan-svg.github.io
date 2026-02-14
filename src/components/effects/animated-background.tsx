@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -24,7 +24,7 @@ function buildStars(count: number): Star[] {
       id: i,
       x: random(0, 100, 1.2),
       y: random(0, 100, 4.4),
-      size: random(1, 2.6, 8.1),
+      size: random(1, 2.3, 8.1),
       delay: random(0, 4, 10.5),
       duration: random(2.2, 6.4, 13.8)
     };
@@ -33,30 +33,44 @@ function buildStars(count: number): Star[] {
 
 export function AnimatedBackground() {
   const reduceMotion = useReducedMotion();
-  const stars = useMemo(() => buildStars(78), []);
+  const stars = useMemo(() => buildStars(64), []);
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(86,197,255,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(151,71,255,0.14),transparent_42%),radial-gradient(circle_at_80%_80%,rgba(93,255,182,0.16),transparent_38%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.02),rgba(255,255,255,0))] opacity-60" />
-      <div className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:3px_3px]" />
+      <motion.div
+        className="absolute -left-[18%] top-[-24%] h-[58vh] w-[58vh] rounded-full bg-cyan-300/20 blur-3xl"
+        animate={reduceMotion ? undefined : { x: [0, 40, 0], y: [0, 14, 0] }}
+        transition={reduceMotion ? undefined : { duration: 22, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute -right-[16%] top-[6%] h-[52vh] w-[52vh] rounded-full bg-blue-300/18 blur-3xl"
+        animate={reduceMotion ? undefined : { x: [0, -36, 0], y: [0, -20, 0] }}
+        transition={reduceMotion ? undefined : { duration: 25, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[-24%] left-[38%] h-[50vh] w-[50vh] rounded-full bg-emerald-300/18 blur-3xl"
+        animate={reduceMotion ? undefined : { y: [0, -26, 0], x: [0, 12, 0] }}
+        transition={reduceMotion ? undefined : { duration: 24, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_22%,rgba(255,255,255,0.84),transparent_52%),radial-gradient(circle_at_88%_12%,rgba(234,246,255,0.75),transparent_48%),linear-gradient(180deg,rgba(250,253,255,0.92),rgba(242,249,255,0.84))]" />
+      <div className="absolute inset-0 opacity-[0.1] [background-image:radial-gradient(rgba(48,123,255,0.45)_1px,transparent_1px)] [background-size:3px_3px]" />
       {stars.map((star) => (
         <motion.span
           key={star.id}
-          className="absolute rounded-full bg-white"
+          className="absolute rounded-full bg-cyan-500/70"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: star.size,
             height: star.size,
-            opacity: 0.7
+            opacity: 0.34
           }}
           animate={
             reduceMotion
-              ? { opacity: 0.65 }
+              ? { opacity: 0.34 }
               : {
-                  opacity: [0.2, 0.95, 0.2],
-                  scale: [1, 1.5, 1]
+                  opacity: [0.12, 0.52, 0.12],
+                  scale: [1, 1.34, 1]
                 }
           }
           transition={

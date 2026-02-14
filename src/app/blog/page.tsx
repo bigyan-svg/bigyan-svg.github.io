@@ -30,7 +30,9 @@ export default function BlogPage() {
       const matchSearch =
         !search.trim() ||
         post.title.toLowerCase().includes(search.toLowerCase()) ||
-        post.excerpt.toLowerCase().includes(search.toLowerCase());
+        post.excerpt.toLowerCase().includes(search.toLowerCase()) ||
+        post.tags.some((item) => item.toLowerCase().includes(search.toLowerCase())) ||
+        post.category.toLowerCase().includes(search.toLowerCase());
       const matchCategory = category === "all" || post.category === category;
       const matchTag = tag === "all" || post.tags.includes(tag);
       return matchSearch && matchCategory && matchTag;

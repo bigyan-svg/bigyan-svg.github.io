@@ -1,7 +1,8 @@
-﻿import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { blogPosts } from "@/lib/data";
+import { blogPosts, imageBlurDataUrl } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
@@ -26,7 +27,16 @@ export default async function BlogDetailPage({
         <ArrowLeft className="size-4" /> Back to blog
       </Link>
 
-      <Card className="mt-6">
+      <Card className="mt-6 overflow-hidden">
+        <Image
+          src={post.coverImage}
+          alt={post.title}
+          width={1600}
+          height={840}
+          placeholder="blur"
+          blurDataURL={imageBlurDataUrl}
+          className="aspect-[16/7] w-full object-cover"
+        />
         <CardHeader className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{post.category}</Badge>
@@ -40,7 +50,10 @@ export default async function BlogDetailPage({
           {blocks.map((block, index) => {
             if (index % 2 === 1) {
               return (
-                <pre key={index} className="overflow-x-auto rounded-xl border border-border/60 bg-black/70 p-4 text-sm text-cyan-200">
+                <pre
+                  key={index}
+                  className="overflow-x-auto rounded-xl border border-border/70 bg-slate-950/95 p-4 text-sm text-cyan-200 dark:bg-black/70"
+                >
                   <code>{block.trim()}</code>
                 </pre>
               );
