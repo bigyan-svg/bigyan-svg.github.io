@@ -107,6 +107,88 @@ body::after {
   color: hsl(var(--foreground));
 }
 
+.richtext {
+  color: hsl(var(--foreground));
+}
+
+.richtext :where(p) {
+  margin-top: 1rem;
+  line-height: 1.85;
+  color: hsl(var(--muted-foreground));
+}
+
+.richtext :where(h2) {
+  margin-top: 2.3rem;
+  scroll-margin-top: 6rem;
+  font-size: 1.6rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.richtext :where(h3) {
+  margin-top: 1.8rem;
+  scroll-margin-top: 6rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.richtext :where(ul, ol) {
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.richtext :where(li) {
+  margin-top: 0.4rem;
+}
+
+.richtext :where(a) {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--primary) / 0.35);
+  text-underline-offset: 3px;
+}
+
+.richtext :where(blockquote) {
+  margin-top: 1.25rem;
+  border-left: 2px solid hsl(var(--primary) / 0.4);
+  padding-left: 1rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.richtext :where(pre) {
+  margin-top: 1.25rem;
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border) / 0.8);
+  background: linear-gradient(180deg, rgba(2, 12, 28, 0.92), rgba(2, 8, 20, 0.92));
+  padding: 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.richtext :where(pre code) {
+  font-family: var(--font-space-mono);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: rgba(214, 246, 255, 0.92);
+}
+
+.richtext :where(code):not(pre code) {
+  font-family: var(--font-space-mono);
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border) / 0.7);
+  background: hsl(var(--muted) / 0.6);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.9em;
+}
+
+.richtext :where(img) {
+  margin-top: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border) / 0.7);
+}
+
 @layer utilities {
   .glass {
     background: linear-gradient(135deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.6));
