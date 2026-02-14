@@ -265,6 +265,7 @@ export async function getPortfolioContent(options?: { includeDrafts?: boolean })
     })),
     pdfResources: documents.map((document) => ({
       id: document.id,
+      slug: document.slug,
       title: document.title,
       type:
         document.docType === "RESUME"

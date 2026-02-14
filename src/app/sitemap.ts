@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/projects`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/media`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/resources`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.8 }
   ];
 
@@ -30,5 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75
   }));
 
-  return [...staticRoutes, ...projectRoutes, ...blogRoutes];
+  const resourceRoutes: MetadataRoute.Sitemap = defaultPortfolioContent.pdfResources.map((resource) => ({
+    url: `${siteUrl}/resources/${resource.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7
+  }));
+
+  return [...staticRoutes, ...projectRoutes, ...blogRoutes, ...resourceRoutes];
 }

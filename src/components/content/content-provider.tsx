@@ -99,6 +99,7 @@ const videoSchema = z.object({
 
 const pdfSchema = z.object({
   id: z.string().min(1),
+  slug: z.string().min(1),
   title: z.string().min(1),
   type: z.enum(["Resume", "Certificate", "Report", "Other"]),
   description: z.string(),

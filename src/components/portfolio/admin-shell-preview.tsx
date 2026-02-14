@@ -2,7 +2,7 @@
 "use client";
 
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { FolderOpen, Loader2, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
+import { ExternalLink, FileText, FolderOpen, Loader2, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import type { FrontendControls, HomeSectionItem, NavItem, Profile } from "@/lib/
 import { slugify } from "@/lib/validators";
 import { usePortfolioContent } from "@/components/content/content-provider";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1533,12 +1533,36 @@ export function AdminShellPreview() {
       {activeTab === "documents" ? (
         <CrudShell title="Documents" count={documents.length}>
           <CrudTable
-            headers={["Title", "Type", "Status", "Updated", "Actions"]}
+            headers={["Title", "Type", "Status", "Updated", "File", "Actions"]}
             rows={documents.map((item) => [
               item.title,
               item.docType,
               <StatusBadge key={`${item.id}-status`} status={item.status} />,
               formatUpdatedAt(item.updatedAt),
+              item.fileUrl ? (
+                <div key={`${item.id}-file`} className="flex flex-wrap gap-2">
+                  <a
+                    href={`/resources/${item.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={buttonVariants({ size: "sm", variant: "outline" })}
+                  >
+                    <FileText className="size-3.5" /> Preview
+                  </a>
+                  <a
+                    href={item.fileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={buttonVariants({ size: "sm", variant: "outline" })}
+                  >
+                    <ExternalLink className="size-3.5" /> Open
+                  </a>
+                </div>
+              ) : (
+                <span key={`${item.id}-file`} className="text-sm text-muted-foreground">
+                  —
+                </span>
+              ),
               <ActionButtons
                 key={`${item.id}-actions`}
                 onEdit={() => onEditDocument(item)}

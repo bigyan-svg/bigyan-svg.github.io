@@ -81,7 +81,12 @@ export default function MediaPage() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-2xl font-semibold">PDF Resources</h3>
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <h3 className="text-2xl font-semibold">PDF Resources</h3>
+            <Link href="/resources" className="text-sm text-muted-foreground hover:text-foreground">
+              Browse all resources
+            </Link>
+          </div>
           <div className="grid gap-4">
             {pdfResources.map((item) => (
               <Card key={item.id}>
@@ -92,7 +97,7 @@ export default function MediaPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{item.type}</Badge>
-                    <Link href={item.url} target="_blank" className={buttonVariants({ size: "sm", variant: "outline" })}>
+                    <Link href={`/resources/${item.slug}`} className={buttonVariants({ size: "sm", variant: "outline" })}>
                       <FileText className="size-4" /> Preview
                     </Link>
                     <Link href={item.url} target="_blank" className={buttonVariants({ size: "sm" })}>

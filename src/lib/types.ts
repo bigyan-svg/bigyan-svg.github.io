@@ -67,6 +67,7 @@ export type Video = {
 
 export type PdfResource = {
   id: string;
+  slug: string;
   title: string;
   type: "Resume" | "Certificate" | "Report" | "Other";
   description: string;

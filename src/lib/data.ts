@@ -410,6 +410,7 @@ export const videos: Video[] = [
 export const pdfResources: PdfResource[] = [
   {
     id: "pdf-1",
+    slug: "bigyan-sanjyal-resume",
     title: "Bigyan Sanjyal Resume",
     type: "Resume",
     description: "Current one-page resume with project outcomes and skills summary.",
@@ -417,6 +418,7 @@ export const pdfResources: PdfResource[] = [
   },
   {
     id: "pdf-2",
+    slug: "cloud-fundamentals-certificate",
     title: "Cloud Fundamentals Certificate",
     type: "Certificate",
     description: "Verified coursework in cloud architecture and deployment workflows.",
@@ -424,6 +426,7 @@ export const pdfResources: PdfResource[] = [
   },
   {
     id: "pdf-3",
+    slug: "realtime-dashboard-case-study",
     title: "Realtime Dashboard Case Study",
     type: "Report",
     description: "Engineering report covering observability dashboard design decisions.",
