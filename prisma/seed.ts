@@ -3,19 +3,20 @@ import { PrismaClient, PublishStatus, TimelineType, VideoSource, DocumentType } 
 
 const prisma = new PrismaClient();
 const SAMPLE_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+const ADMIN_EMAIL = "bigyansanjyal56@gmail.com";
 
 async function main() {
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "ChangeMe123!";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "#Bigyan123";
   const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({
-    where: { email: "admin@bigyan.dev" },
+    where: { email: ADMIN_EMAIL },
     update: {
       passwordHash
     },
     create: {
       name: "Bigyan Sanjyal",
-      email: "admin@bigyan.dev",
+      email: ADMIN_EMAIL,
       passwordHash,
       role: "ADMIN"
     }
@@ -29,7 +30,7 @@ async function main() {
         headline: "BE Computer Engineering Student | Full-Stack Developer",
         summary:
           "I build performant, maintainable web applications with a focus on clean architecture, practical UX, and measurable impact.",
-        email: "bigyan@example.com",
+        email: "bigyansanjyal56@gmail.com",
         phone: "+977-9800000000",
         location: "Kathmandu, Nepal",
         website: "https://your-domain.com",
@@ -176,7 +177,7 @@ async function main() {
   });
 
   console.log("Seed completed.");
-  console.log("Admin login: admin@bigyan.dev /", adminPassword);
+  console.log(`Admin login: ${ADMIN_EMAIL} / ${adminPassword}`);
 }
 
 main()

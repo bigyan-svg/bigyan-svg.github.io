@@ -15,9 +15,8 @@ export const profile = {
   username: "bigyan-svg",
   role: "BE Computer Engineering Student",
   location: "Kathmandu, Nepal",
-  email: "bigyan@example.com",
-  avatar:
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+  email: "bigyansanjyal56@gmail.com",
+  avatar: "/images/bigyan.jpeg",
   heroImage:
     "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
   aboutImage:
