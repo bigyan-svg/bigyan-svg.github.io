@@ -1,172 +1,112 @@
-import Link from "next/link";
-import {
-  ArrowRight,
-  Download,
-  Github,
-  Linkedin,
-  Mail,
-  Orbit,
-  Sparkles,
-  Zap
-} from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+﻿import Link from "next/link";
+import { ArrowRight, Send } from "lucide-react";
+import { HeroSection } from "@/components/portfolio/hero-section";
+import { AboutPreview } from "@/components/portfolio/about-preview";
+import { SkillsRadar } from "@/components/portfolio/skills-radar";
+import { ProjectCard } from "@/components/portfolio/project-card";
+import { BlogCard } from "@/components/portfolio/blog-card";
+import { Reveal } from "@/components/effects/reveal";
+import { SectionHeading } from "@/components/common/section-heading";
+import { skills, projects, blogPosts } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProjectCard } from "@/components/cards/project-card";
-import { BlogCard } from "@/components/cards/blog-card";
-import { IdeaCard } from "@/components/cards/idea-card";
-import {
-  getFeaturedProjects,
-  getSiteResume,
-  listBlogPosts,
-  listIdeas
-} from "@/lib/public-data";
+import { buttonVariants } from "@/components/ui/button";
 
-export default async function HomePage() {
-  const [resume, projects, blog, ideas] = await Promise.all([
-    getSiteResume(),
-    getFeaturedProjects(3),
-    listBlogPosts({ page: 1, pageSize: 3 }),
-    listIdeas({ page: 1, pageSize: 3 })
-  ]);
-
-  const quickStats = [
-    {
-      label: "Featured Projects",
-      value: projects.length,
-      icon: Orbit
-    },
-    {
-      label: "Recent Blog Posts",
-      value: blog.items.length,
-      icon: Sparkles
-    },
-    {
-      label: "Core Skills",
-      value: resume?.skills.length || 0,
-      icon: Zap
-    }
-  ];
-
+export default function HomePage() {
   return (
     <>
-      <section className="container pb-10 pt-8 md:pb-14 md:pt-12">
-        <div className="section-glass bg-grid-soft reveal-up relative overflow-hidden rounded-[2rem] border border-border/70 p-6 shadow-[0_30px_62px_-42px_rgba(22,80,120,0.74)] md:p-10">
-          <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-primary/25 blur-3xl" />
-          <div className="absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-amber-300/25 blur-3xl" />
+      <HeroSection />
+      <AboutPreview />
 
-          <div className="relative grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-end">
-            <div className="space-y-6">
-              <p className="inline-flex items-center rounded-full border border-border/70 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                BE Computer Engineering Student
-              </p>
-              <div className="space-y-3">
-                <h1 className="text-4xl font-semibold tracking-tight md:text-6xl">
-                  {resume?.fullName || "Bigyan Sanjyal"}
-                </h1>
-                <p className="max-w-2xl text-lg text-muted-foreground">
-                  {resume?.headline ||
-                    "I architect and build full-stack products with iconic user experience, reliable backend design, and sharp execution speed."}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Link href="https://github.com/bigyan-svg" target="_blank" className={buttonVariants({ variant: "outline" })}>
-                  <Github className="size-4" />
-                  GitHub
-                </Link>
-                <Link href="https://linkedin.com/in/bigyan-svg" target="_blank" className={buttonVariants({ variant: "outline" })}>
-                  <Linkedin className="size-4" />
-                  LinkedIn
-                </Link>
-                <Link href="mailto:bigyan@example.com" className={buttonVariants({ variant: "outline" })}>
-                  <Mail className="size-4" />
-                  Email
-                </Link>
-                <Link href={resume?.resumePdfUrl || "/resume"} className={buttonVariants({ variant: "default" })}>
-                  <Download className="size-4" />
-                  Download Resume
-                </Link>
-              </div>
-            </div>
-
-            <Card className="shine-sweep border-primary/20 bg-white/80">
-              <CardContent className="space-y-5 p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Orbit Snapshot</p>
-                <div className="space-y-3">
-                  {quickStats.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <div
-                        key={item.label}
-                        className="rounded-xl border border-border/70 bg-white/72 p-3"
-                      >
-                        <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                          <Icon className="size-3.5" />
-                          {item.label}
-                        </p>
-                        <p className="mt-2 text-3xl font-semibold tracking-tight">{item.value}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-                <Link href="/about" className="inline-flex items-center text-sm font-medium text-primary">
-                  Explore profile <ArrowRight className="ml-1 size-4" />
-                </Link>
+      <section id="skills-preview" className="container pt-20" data-home-section>
+        <Reveal>
+          <SectionHeading
+            eyebrow="Skill Matrix"
+            title="Data-informed engineering depth"
+            description="From UI systems to backend architecture, here is a quick visual snapshot."
+          />
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+            <Card>
+              <CardContent className="pt-6">
+                <SkillsRadar items={skills} />
               </CardContent>
             </Card>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {skills.slice(0, 6).map((skill) => (
+                <Card key={skill.id}>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">{skill.category}</p>
+                    <p className="mt-1 text-lg font-semibold">{skill.name}</p>
+                    <p className="mt-3 text-xs uppercase tracking-[0.12em] text-primary">Level {skill.level}%</p>
+                    <div className="mt-2 h-2 rounded-full bg-muted">
+                      <div className="h-2 rounded-full bg-primary" style={{ width: `${skill.level}%` }} />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      <section className="container py-8">
-        <div className="mb-6 flex items-end justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Build</p>
-            <h2 className="text-2xl font-semibold tracking-tight">Featured Projects</h2>
+      <section id="projects-preview" className="container pt-20" data-home-section>
+        <Reveal>
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <SectionHeading
+              eyebrow="Projects"
+              title="Cinematic products with production foundations"
+              description="Selected projects designed for impact, performance, and maintainability."
+            />
+            <Link href="/projects" className="text-sm text-primary hover:underline">
+              Explore all
+            </Link>
           </div>
-          <Link href="/projects" className="text-sm text-primary hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {(projects as any[]).map((project: any) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {projects.slice(0, 3).map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </Reveal>
       </section>
 
-      <section className="container py-8">
-        <div className="mb-6 flex items-end justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Write</p>
-            <h2 className="text-2xl font-semibold tracking-tight">Latest Blog Posts</h2>
+      <section id="blog-preview" className="container pt-20" data-home-section>
+        <Reveal>
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <SectionHeading
+              eyebrow="Writing"
+              title="Engineering notes from real builds"
+              description="Readable posts with architecture insights and practical lessons."
+            />
+            <Link href="/blog" className="text-sm text-primary hover:underline">
+              View blog
+            </Link>
           </div>
-          <Link href="/blog" className="text-sm text-primary hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {(blog.items as any[]).map((post: any) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {blogPosts.slice(0, 3).map((post) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        </Reveal>
       </section>
 
-      <section className="container pb-16 pt-8">
-        <div className="mb-6 flex items-end justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Think</p>
-            <h2 className="text-2xl font-semibold tracking-tight">Ideas and Notes</h2>
-          </div>
-          <Link href="/ideas" className="text-sm text-primary hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {(ideas.items as any[]).map((idea: any) => (
-            <IdeaCard key={idea.id} idea={idea} />
-          ))}
-        </div>
+      <section id="contact-preview" className="container pb-20 pt-20" data-home-section>
+        <Reveal>
+          <Card className="overflow-hidden">
+            <CardContent className="relative p-8 md:p-10">
+              <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
+              <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.16em] text-primary">Next mission</p>
+                  <h2 className="mt-2 text-3xl font-semibold text-balance md:text-4xl">
+                    Let us build your next standout digital product.
+                  </h2>
+                </div>
+                <Link href="/contact" className={buttonVariants({ size: "lg" })}>
+                  <Send className="size-4" /> Start conversation <ArrowRight className="size-4" />
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </Reveal>
       </section>
     </>
   );

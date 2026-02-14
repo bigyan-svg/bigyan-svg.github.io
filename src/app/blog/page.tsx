@@ -1,88 +1,86 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { listBlogPosts } from "@/lib/public-data";
-import { PageHeader } from "@/components/common/page-header";
-import { BlogCard } from "@/components/cards/blog-card";
+﻿"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { blogPosts } from "@/lib/data";
+import { SectionHeading } from "@/components/common/section-heading";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { PaginationLinks } from "@/components/common/pagination-links";
+import { BlogCard } from "@/components/portfolio/blog-card";
+import { EmptyState } from "@/components/common/empty-state";
+import { SkeletonGrid } from "@/components/portfolio/skeleton-grid";
 
-export const metadata: Metadata = {
-  title: "Blog"
-};
+export default function BlogPage() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [tag, setTag] = useState("all");
+  const [loading, setLoading] = useState(false);
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+  const tags = useMemo(() => ["all", ...Array.from(new Set(blogPosts.flatMap((post) => post.tags)))], []);
+  const categories = useMemo(() => ["all", ...Array.from(new Set(blogPosts.map((post) => post.category)))], []);
 
-export default async function BlogPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const q = typeof params.q === "string" ? params.q : "";
-  const rawCategory = typeof params.category === "string" ? params.category : "";
-  const rawTag = typeof params.tag === "string" ? params.tag : "";
-  const category = rawCategory === "all" ? "" : rawCategory;
-  const tag = rawTag === "all" ? "" : rawTag;
-  const page = Number(typeof params.page === "string" ? params.page : "1");
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 260);
+    return () => clearTimeout(timer);
+  }, [search, category, tag]);
 
-  const result = await listBlogPosts({
-    page,
-    pageSize: 9,
-    q: q || undefined,
-    category: category || undefined,
-    tag: tag || undefined
-  });
-
-  const buildHref = (targetPage: number) => {
-    const query = new URLSearchParams();
-    if (q) query.set("q", q);
-    if (category) query.set("category", category);
-    if (tag) query.set("tag", tag);
-    query.set("page", String(targetPage));
-    return `/blog?${query.toString()}`;
-  };
+  const filtered = useMemo(() => {
+    return blogPosts.filter((post) => {
+      const matchSearch =
+        !search.trim() ||
+        post.title.toLowerCase().includes(search.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(search.toLowerCase());
+      const matchCategory = category === "all" || post.category === category;
+      const matchTag = tag === "all" || post.tags.includes(tag);
+      return matchSearch && matchCategory && matchTag;
+    });
+  }, [search, category, tag]);
 
   return (
-    <>
-      <PageHeader
-        title="Blog"
-        description="Engineering notes, architecture writeups, and full-stack implementation stories."
+    <section className="container pb-20 pt-16">
+      <SectionHeading
+        eyebrow="Blog"
+        title="Code-friendly writing experience"
+        description="Browse by category and tag, search quickly, and read structured engineering content."
       />
-      <section className="container pb-16">
-        <form className="section-glass mb-6 grid gap-3 rounded-2xl border border-border/70 p-4 md:grid-cols-4">
-          <Input defaultValue={q} name="q" placeholder="Search posts..." />
-          <Select
-            name="category"
-            defaultValue={category || "all"}
-            options={[
-              { label: "All Categories", value: "all" },
-              ...result.categories.map((item) => ({ label: item, value: item }))
-            ]}
-          />
-          <Select
-            name="tag"
-            defaultValue={tag || "all"}
-            options={[
-              { label: "All Tags", value: "all" },
-              ...result.tags.map((item) => ({ label: `#${item}`, value: item }))
-            ]}
-          />
-          <div className="flex gap-2">
-            <Button type="submit" className="w-full">
-              Apply
-            </Button>
-            <Link href="/blog" className="inline-flex h-10 items-center rounded-xl border border-input bg-white/70 px-4 text-sm backdrop-blur-sm transition hover:bg-white/90">
-              Reset
-            </Link>
-          </div>
-        </form>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {result.items.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
+      <div className="mt-8 grid gap-3 rounded-2xl border border-border/60 bg-card/65 p-4 md:grid-cols-4">
+        <div className="relative md:col-span-2">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={search} onChange={(event) => setSearch(event.target.value)} className="pl-10" placeholder="Search posts..." />
         </div>
+        <Select
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+          options={categories.map((value) => ({
+            value,
+            label: value === "all" ? "All Categories" : value
+          }))}
+        />
+        <Select
+          value={tag}
+          onChange={(event) => setTag(event.target.value)}
+          options={tags.map((value) => ({
+            value,
+            label: value === "all" ? "All Tags" : `#${value}`
+          }))}
+        />
+      </div>
 
-        <PaginationLinks pagination={result.pagination} buildHref={buildHref} />
-      </section>
-    </>
+      <div className="mt-8">
+        {loading ? <SkeletonGrid count={6} /> : null}
+        {!loading && filtered.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((post) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        ) : null}
+        {!loading && filtered.length === 0 ? (
+          <EmptyState title="No posts found" description="Try another keyword, category, or tag." />
+        ) : null}
+      </div>
+    </section>
   );
 }

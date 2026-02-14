@@ -1,11 +1,10 @@
-export default function GlobalLoading() {
+﻿import { SkeletonGrid } from "@/components/portfolio/skeleton-grid";
+
+export default function Loading() {
   return (
     <section className="container py-16">
-      <div className="space-y-3">
-        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-        <div className="h-4 w-full animate-pulse rounded bg-muted" />
-        <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
-      </div>
+      <div className="mb-6 h-8 w-64 animate-pulse rounded-lg bg-muted/70" />
+      <SkeletonGrid count={6} />
     </section>
   );
 }

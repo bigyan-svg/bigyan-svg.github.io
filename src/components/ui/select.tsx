@@ -1,25 +1,28 @@
-import * as React from "react";
+﻿import * as React from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface SimpleSelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
   options: { label: string; value: string }[];
-}
+};
 
-export function Select({ options, className, ...props }: SimpleSelectProps) {
+export function Select({ options, className, ...props }: SelectProps) {
   return (
-    <select
-      className={cn(
-        "h-10 w-full rounded-xl border border-input bg-white/78 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] backdrop-blur-sm transition-all duration-250 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary/50 focus-visible:bg-white",
-        className
-      )}
-      {...props}
-    >
-      {options.map((opt) => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
-        </option>
-      ))}
-    </select>
+    <div className="relative">
+      <select
+        className={cn(
+          "h-10 w-full appearance-none rounded-xl border border-input/70 bg-background/70 px-3 pr-10 text-sm text-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          className
+        )}
+        {...props}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    </div>
   );
 }

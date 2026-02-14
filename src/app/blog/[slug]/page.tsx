@@ -1,57 +1,62 @@
-import type { Metadata } from "next";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
-import { draftMode } from "next/headers";
+import { ArrowLeft } from "lucide-react";
+import { blogPosts } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { TagList } from "@/components/content/tag-list";
-import { RenderHtml } from "@/components/content/render-html";
-import { ViewTracker } from "@/components/content/view-tracker";
-import { CodeHighlight } from "@/components/content/code-highlight";
-import { getBlogBySlug } from "@/lib/public-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 
-type Params = { params: Promise<{ slug: string }> };
-
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export default async function BlogDetailPage({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  const post = await getBlogBySlug(slug, true);
-  if (!post) return {};
-  return {
-    title: post.title,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: post.coverImage ? [post.coverImage] : []
-    }
-  };
-}
+  const post = blogPosts.find((item) => item.slug === slug);
 
-export default async function BlogDetailPage({ params }: Params) {
-  const { slug } = await params;
-  const draft = await draftMode();
-  const post = await getBlogBySlug(slug, draft.isEnabled);
   if (!post) {
     notFound();
   }
 
+  const blocks = post.content.split("```");
+
   return (
-    <section className="container py-12">
-      <ViewTracker entity="blog" slug={post.slug} />
-      <CodeHighlight />
-      <article className="mx-auto max-w-4xl space-y-5">
-        <div className="space-y-3">
+    <section className="container pb-20 pt-16">
+      <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="size-4" /> Back to blog
+      </Link>
+
+      <Card className="mt-6">
+        <CardHeader className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{post.category}</Badge>
-            <span className="text-xs text-muted-foreground">
-              {post.publishAt ? new Date(post.publishAt).toLocaleDateString() : "Draft"}
-            </span>
-            <span className="text-xs text-muted-foreground">{post.views} views</span>
+            <span className="text-xs text-muted-foreground">{post.readingTime}</span>
+            <span className="text-xs text-muted-foreground">{formatDate(post.publishedAt)}</span>
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{post.title}</h1>
+          <CardTitle className="text-3xl">{post.title}</CardTitle>
           <p className="text-muted-foreground">{post.excerpt}</p>
-          <TagList tags={post.tags} />
-        </div>
-        <RenderHtml html={post.content} />
-      </article>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {blocks.map((block, index) => {
+            if (index % 2 === 1) {
+              return (
+                <pre key={index} className="overflow-x-auto rounded-xl border border-border/60 bg-black/70 p-4 text-sm text-cyan-200">
+                  <code>{block.trim()}</code>
+                </pre>
+              );
+            }
+
+            return block
+              .split("\n\n")
+              .filter(Boolean)
+              .map((paragraph) => (
+                <p key={`${index}-${paragraph.slice(0, 12)}`} className="text-[15px] leading-7 text-muted-foreground">
+                  {paragraph}
+                </p>
+              ));
+          })}
+        </CardContent>
+      </Card>
     </section>
   );
 }

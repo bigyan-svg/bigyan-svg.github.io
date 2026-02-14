@@ -1,27 +1,24 @@
-"use client";
+﻿"use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
+import { AnimatedBackground } from "@/components/effects/animated-background";
+import { PageTransition } from "@/components/effects/page-transition";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { ScrollProgress } from "@/components/layout/scroll-progress";
+import { BackToTop } from "@/components/layout/back-to-top";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
-
-  if (isAdmin) {
-    return (
-      <div className="admin-shell">
-        <main>{children}</main>
-      </div>
-    );
-  }
-
   return (
-    <div className="public-shell">
-      <SiteHeader />
-      <main>{children}</main>
-      <SiteFooter />
+    <div className="relative min-h-screen overflow-x-clip">
+      <AnimatedBackground />
+      <ScrollProgress />
+      <Navbar />
+      <PageTransition>
+        <main>{children}</main>
+      </PageTransition>
+      <Footer />
+      <BackToTop />
     </div>
   );
 }

@@ -1,97 +1,132 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { getProjectFilterOptions, listProjects } from "@/lib/public-data";
-import { PageHeader } from "@/components/common/page-header";
-import { PaginationLinks } from "@/components/common/pagination-links";
-import { ProjectCard } from "@/components/cards/project-card";
+﻿"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { projects } from "@/lib/data";
+import { SectionHeading } from "@/components/common/section-heading";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { ProjectCard } from "@/components/portfolio/project-card";
+import { EmptyState } from "@/components/common/empty-state";
+import { SkeletonGrid } from "@/components/portfolio/skeleton-grid";
 
-export const metadata: Metadata = {
-  title: "Projects"
-};
+export default function ProjectsPage() {
+  const [search, setSearch] = useState("");
+  const [tech, setTech] = useState("all");
+  const [type, setType] = useState("all");
+  const [sort, setSort] = useState("featured");
+  const [loading, setLoading] = useState(false);
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+  const techOptions = useMemo(() => {
+    const allTags = new Set(projects.flatMap((project) => project.tech));
+    return ["all", ...Array.from(allTags)];
+  }, []);
 
-export default async function ProjectsPage({
-  searchParams
-}: {
-  searchParams: SearchParams;
-}) {
-  const params = await searchParams;
-  const q = typeof params.q === "string" ? params.q : "";
-  const rawTech = typeof params.tech === "string" ? params.tech : "";
-  const rawType = typeof params.type === "string" ? params.type : "";
-  const tech = rawTech === "all" ? "" : rawTech;
-  const type = rawType === "all" ? "" : rawType;
-  const page = Number(typeof params.page === "string" ? params.page : "1");
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 280);
+    return () => clearTimeout(timer);
+  }, [search, tech, type, sort]);
 
-  const [result, filters] = await Promise.all([
-    listProjects({ page, pageSize: 9, q: q || undefined, tech: tech || undefined, type: type || undefined }),
-    getProjectFilterOptions()
-  ]);
+  const filtered = useMemo(() => {
+    let result = [...projects];
 
-  const techOptions = filters.tech;
+    if (search.trim()) {
+      const query = search.toLowerCase();
+      result = result.filter(
+        (project) =>
+          project.title.toLowerCase().includes(query) ||
+          project.summary.toLowerCase().includes(query) ||
+          project.tech.some((tag) => tag.toLowerCase().includes(query))
+      );
+    }
 
-  const buildHref = (targetPage: number) => {
-    const query = new URLSearchParams();
-    if (q) query.set("q", q);
-    if (tech) query.set("tech", tech);
-    if (type) query.set("type", type);
-    query.set("page", String(targetPage));
-    return `/projects?${query.toString()}`;
-  };
+    if (tech !== "all") {
+      result = result.filter((project) => project.tech.includes(tech));
+    }
+
+    if (type !== "all") {
+      result = result.filter((project) => project.type === type);
+    }
+
+    if (sort === "featured") {
+      result = result.sort((a, b) => Number(b.featured) - Number(a.featured));
+    }
+    if (sort === "latest") {
+      result = result.sort((a, b) => Number(b.year) - Number(a.year));
+    }
+    if (sort === "az") {
+      result = result.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return result;
+  }, [search, tech, type, sort]);
 
   return (
-    <>
-      <PageHeader
-        title="Projects"
-        description="Selected engineering projects with architecture notes and implementation details."
+    <section className="container pb-20 pt-16">
+      <SectionHeading
+        eyebrow="Projects"
+        title="Advanced project grid"
+        description="Filter by stack and type, search across metadata, and inspect cinematic card interactions."
       />
-      <section className="container pb-16">
-        <form className="section-glass mb-6 grid gap-3 rounded-2xl border border-border/70 p-4 md:grid-cols-4">
-          <Input defaultValue={q} name="q" placeholder="Search projects..." />
-          <Select
-            name="type"
-            defaultValue={type || "all"}
-            options={[
-              { label: "All Types", value: "all" },
-              ...filters.types.map((item) => ({
-                label: item,
-                value: item
-              }))
-            ]}
-          />
-          <Select
-            name="tech"
-            defaultValue={tech || "all"}
-            options={[
-              { label: "All Tech", value: "all" },
-              ...techOptions.map((item) => ({
-                label: item,
-                value: item
-              }))
-            ]}
-          />
-          <div className="flex gap-2">
-            <Button type="submit" className="w-full">
-              Apply
-            </Button>
-            <Link href="/projects" className="inline-flex h-10 items-center rounded-xl border border-input bg-white/70 px-4 text-sm backdrop-blur-sm transition hover:bg-white/90">
-              Reset
-            </Link>
-          </div>
-        </form>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {result.items.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+      <div className="mt-8 grid gap-3 rounded-2xl border border-border/60 bg-card/65 p-4 md:grid-cols-4">
+        <div className="relative md:col-span-2">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={search} onChange={(event) => setSearch(event.target.value)} className="pl-10" placeholder="Search projects..." />
         </div>
 
-        <PaginationLinks pagination={result.pagination} buildHref={buildHref} />
-      </section>
-    </>
+        <Select
+          value={type}
+          onChange={(event) => setType(event.target.value)}
+          options={[
+            { label: "All Types", value: "all" },
+            ...Array.from(new Set(projects.map((project) => project.type))).map((value) => ({
+              label: value,
+              value
+            }))
+          ]}
+        />
+
+        <Select
+          value={tech}
+          onChange={(event) => setTech(event.target.value)}
+          options={techOptions.map((value) => ({
+            label: value === "all" ? "All Tech" : value,
+            value
+          }))}
+        />
+
+        <Select
+          value={sort}
+          onChange={(event) => setSort(event.target.value)}
+          options={[
+            { label: "Sort: Featured", value: "featured" },
+            { label: "Sort: Latest", value: "latest" },
+            { label: "Sort: A-Z", value: "az" }
+          ]}
+          className="md:col-span-2"
+        />
+      </div>
+
+      <div className="mt-8">
+        {loading ? <SkeletonGrid count={6} /> : null}
+
+        {!loading && filtered.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        ) : null}
+
+        {!loading && filtered.length === 0 ? (
+          <EmptyState
+            title="No projects found"
+            description="Try changing search terms, tech stack, or project type."
+          />
+        ) : null}
+      </div>
+    </section>
   );
 }
