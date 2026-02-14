@@ -150,6 +150,7 @@ type ApplyResult = {
 type ContentContextValue = {
   content: PortfolioContent;
   hydrated: boolean;
+  isAdmin: boolean;
   commandItems: CommandItem[];
   siteStats: {
     projects: number;
@@ -180,52 +181,92 @@ function parseContent(input: unknown): ApplyResult & { data?: PortfolioContent }
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContentState] = useState<PortfolioContent>(() => cloneDefaults());
   const [hydrated, setHydrated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        setHydrated(true);
-        return;
+    let active = true;
+
+    const bootstrap = async () => {
+      try {
+        const sessionResponse = await fetch("/api/admin/session", { cache: "no-store" });
+        const sessionJson = (await sessionResponse.json().catch(() => ({ authenticated: false }))) as {
+          authenticated?: boolean;
+        };
+        const authenticated = Boolean(sessionJson.authenticated);
+
+        if (!active) return;
+        setIsAdmin(authenticated);
+
+        if (!authenticated) {
+          setHydrated(true);
+          return;
+        }
+
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          setHydrated(true);
+          return;
+        }
+
+        const parsedJson = JSON.parse(raw) as unknown;
+        const parsed = parseContent(parsedJson);
+        if (parsed.ok && parsed.data) {
+          setContentState(parsed.data);
+        }
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      } finally {
+        if (active) setHydrated(true);
       }
-      const parsedJson = JSON.parse(raw) as unknown;
-      const parsed = parseContent(parsedJson);
-      if (parsed.ok && parsed.data) {
-        setContentState(parsed.data);
-      }
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setHydrated(true);
-    }
+    };
+
+    void bootstrap();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || !isAdmin) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-  }, [content, hydrated]);
+  }, [content, hydrated, isAdmin]);
 
-  const setContent = useCallback((next: PortfolioContent | ((prev: PortfolioContent) => PortfolioContent)) => {
-    setContentState((prev) => (typeof next === "function" ? (next as (value: PortfolioContent) => PortfolioContent)(prev) : next));
-  }, []);
+  const setContent = useCallback(
+    (next: PortfolioContent | ((prev: PortfolioContent) => PortfolioContent)) => {
+      if (!isAdmin) return;
+      setContentState((prev) =>
+        typeof next === "function" ? (next as (value: PortfolioContent) => PortfolioContent)(prev) : next
+      );
+    },
+    [isAdmin]
+  );
 
   const resetContent = useCallback(() => {
+    if (!isAdmin) return;
     setContentState(cloneDefaults());
-  }, []);
+  }, [isAdmin]);
 
-  const applyJson = useCallback((value: string): ApplyResult => {
-    try {
-      const parsedJson = JSON.parse(value) as unknown;
-      const parsed = parseContent(parsedJson);
-      if (!parsed.ok || !parsed.data) {
-        return { ok: false, error: parsed.error || "Invalid content payload." };
+  const applyJson = useCallback(
+    (value: string): ApplyResult => {
+      if (!isAdmin) {
+        return { ok: false, error: "Unauthorized." };
       }
-      setContentState(parsed.data);
-      return { ok: true };
-    } catch {
-      return { ok: false, error: "JSON format is invalid." };
-    }
-  }, []);
+
+      try {
+        const parsedJson = JSON.parse(value) as unknown;
+        const parsed = parseContent(parsedJson);
+        if (!parsed.ok || !parsed.data) {
+          return { ok: false, error: parsed.error || "Invalid content payload." };
+        }
+        setContentState(parsed.data);
+        return { ok: true };
+      } catch {
+        return { ok: false, error: "JSON format is invalid." };
+      }
+    },
+    [isAdmin]
+  );
 
   const exportJson = useCallback(() => {
     return JSON.stringify(content, null, 2);
@@ -244,6 +285,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     () => ({
       content,
       hydrated,
+      isAdmin,
       commandItems,
       siteStats,
       setContent,
@@ -251,7 +293,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       applyJson,
       exportJson
     }),
-    [content, hydrated, commandItems, siteStats, setContent, resetContent, applyJson, exportJson]
+    [content, hydrated, isAdmin, commandItems, siteStats, setContent, resetContent, applyJson, exportJson]
   );
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
