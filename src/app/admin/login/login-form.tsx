@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, LogIn, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ export function AdminLoginForm({ defaultEmail }: { defaultEmail: string }) {
   const router = useRouter();
   const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +46,7 @@ export function AdminLoginForm({ defaultEmail }: { defaultEmail: string }) {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <Card className="w-full max-w-md shadow-[var(--shadow-lg)]">
       <CardHeader>
         <CardTitle>Admin Login</CardTitle>
         <p className="text-sm text-muted-foreground">Sign in to manage frontend content and settings.</p>
@@ -62,6 +63,8 @@ export function AdminLoginForm({ defaultEmail }: { defaultEmail: string }) {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 className="pl-9"
+                autoComplete="email"
+                inputMode="email"
                 required
               />
             </div>
@@ -73,12 +76,21 @@ export function AdminLoginForm({ defaultEmail }: { defaultEmail: string }) {
               <Lock className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="admin-password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="pl-9"
+                className="pl-9 pr-10"
+                autoComplete="current-password"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
             </div>
           </div>
 

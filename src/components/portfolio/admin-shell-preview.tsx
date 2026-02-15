@@ -2,7 +2,28 @@
 "use client";
 
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { ExternalLink, FileText, FolderOpen, Loader2, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
+import {
+  type LucideIcon,
+  Briefcase,
+  Camera,
+  Clapperboard,
+  Clock3,
+  ExternalLink,
+  FileText,
+  FolderOpen,
+  LayoutDashboard,
+  Loader2,
+  PenLine,
+  Pencil,
+  Plus,
+  Save,
+  Search,
+  Settings2,
+  Sparkles,
+  Trash2,
+  Upload,
+  X
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -221,6 +242,65 @@ const statusOptions: Array<{ label: string; value: PublishStatus }> = [
   { label: "Scheduled", value: "SCHEDULED" }
 ];
 
+const controlMeta: Record<keyof FrontendControls, { label: string; description: string }> = {
+  showNavbarProfilePhoto: {
+    label: "Navbar profile photo",
+    description: "Show your avatar beside the brand in the navbar."
+  },
+  showHeroAvatarChip: {
+    label: "Hero avatar chip",
+    description: "Display the @username chip on the hero media card."
+  },
+  showHeroStats: {
+    label: "Hero stats",
+    description: "Show quick stats (projects, skills, blogs) in the hero section."
+  },
+  showHomeAboutPreview: {
+    label: "Home: About preview",
+    description: "Enable the About preview section on the home page."
+  },
+  showHomeSkillsPreview: {
+    label: "Home: Skills preview",
+    description: "Enable the Skills snapshot section on the home page."
+  },
+  showHomeProjectsPreview: {
+    label: "Home: Projects preview",
+    description: "Enable the Projects preview section on the home page."
+  },
+  showHomeBlogPreview: {
+    label: "Home: Blog preview",
+    description: "Enable the Blog preview section on the home page."
+  },
+  showHomeContactPreview: {
+    label: "Home: Contact CTA",
+    description: "Enable the contact call-to-action section on the home page."
+  },
+  enableAnimatedBackground: {
+    label: "Animated background",
+    description: "Enable the aurora/grid animated background effects."
+  },
+  enablePageTransitions: {
+    label: "Page transitions",
+    description: "Animate route transitions between pages."
+  },
+  enableRevealAnimations: {
+    label: "Reveal animations",
+    description: "Animate sections as they enter the viewport while scrolling."
+  },
+  enableCardTilt: {
+    label: "3D card tilt",
+    description: "Enable 3D tilt interactions on project cards."
+  },
+  enableScrollProgress: {
+    label: "Scroll progress",
+    description: "Show the top progress bar while scrolling."
+  },
+  enableBackToTop: {
+    label: "Back to top",
+    description: "Show a floating back-to-top button."
+  }
+};
+
 const projectFormDefaults: ProjectForm = {
   title: "",
   slug: "",
@@ -330,8 +410,10 @@ function formatUpdatedAt(value: string) {
 export function AdminShellPreview() {
   const router = useRouter();
   const { content, hydrated, refreshContent } = usePortfolioContent();
+  const mainTopRef = useRef<HTMLDivElement | null>(null);
 
   const [activeTab, setActiveTab] = useState<TabKey>("settings");
+  const [tabQuery, setTabQuery] = useState("");
   const [bootstrapping, setBootstrapping] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [loadingEntities, setLoadingEntities] = useState(false);
@@ -381,12 +463,73 @@ export function AdminShellPreview() {
       projects: projects.length,
       blogPosts: blogPosts.length,
       skills: skills.length,
+      timeline: timelineItems.length,
       photos: photos.length,
       videos: videos.length,
       documents: documents.length
     }),
-    [blogPosts.length, documents.length, photos.length, projects.length, skills.length, videos.length]
+    [blogPosts.length, documents.length, photos.length, projects.length, skills.length, timelineItems.length, videos.length]
   );
+
+  const tabMeta = useMemo(
+    () =>
+      ({
+        settings: {
+          icon: Settings2,
+          description: "Profile, navigation, and frontend toggles.",
+          count: null
+        },
+        projects: {
+          icon: Briefcase,
+          description: "Case studies, tech stack, and publishing.",
+          count: stats.projects
+        },
+        blog: {
+          icon: PenLine,
+          description: "Posts, tags, scheduling, and SEO.",
+          count: stats.blogPosts
+        },
+        skills: {
+          icon: Sparkles,
+          description: "Skill taxonomy and proficiency levels.",
+          count: stats.skills
+        },
+        timeline: {
+          icon: Clock3,
+          description: "Education and experience timeline.",
+          count: stats.timeline
+        },
+        photos: {
+          icon: Camera,
+          description: "Gallery photos and captions.",
+          count: stats.photos
+        },
+        videos: {
+          icon: Clapperboard,
+          description: "Video embeds and uploads.",
+          count: stats.videos
+        },
+        documents: {
+          icon: FileText,
+          description: "Resume and PDF resources.",
+          count: stats.documents
+        }
+      } satisfies Record<TabKey, { icon: LucideIcon; description: string; count: number | null }>),
+    [stats.blogPosts, stats.documents, stats.photos, stats.projects, stats.skills, stats.timeline, stats.videos]
+  );
+
+  const filteredTabs = useMemo(() => {
+    const query = tabQuery.trim().toLowerCase();
+    if (!query) return tabItems;
+    return tabItems.filter((item) => item.label.toLowerCase().includes(query));
+  }, [tabQuery]);
+
+  const selectTab = (key: TabKey) => {
+    setActiveTab(key);
+    requestAnimationFrame(() => {
+      mainTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
 
   const apiRequest = useCallback(
     async <T,>(url: string, options?: RequestInit): Promise<T> => {
@@ -1016,41 +1159,134 @@ export function AdminShellPreview() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-3">
-          <div>
-            <CardTitle>Live CMS Control Center</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">
-              All updates are persisted to database and reflected on the public frontend.
-            </p>
-          </div>
-          <Button type="button" variant="outline" onClick={() => void loadEntities()} disabled={loadingEntities}>
-            {loadingEntities ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Refresh Data
-          </Button>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-4">
-          <StatBox label="Projects" value={stats.projects} />
-          <StatBox label="Blog Posts" value={stats.blogPosts} />
-          <StatBox label="Skills" value={stats.skills} />
-          <StatBox label="Media + Docs" value={stats.photos + stats.videos + stats.documents} />
-        </CardContent>
-      </Card>
+    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+      <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <Card>
+          <CardHeader className="space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Control Center</p>
+                <CardTitle className="flex items-center gap-2">
+                  <LayoutDashboard className="size-5 text-primary" /> Live CMS
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Edits persist to database and reflect on the public site.</p>
+              </div>
+              <Button type="button" variant="outline" onClick={() => void loadEntities()} disabled={loadingEntities}>
+                {loadingEntities ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Refresh
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2">
+            <StatBox label="Projects" value={stats.projects} />
+            <StatBox label="Blog" value={stats.blogPosts} />
+            <StatBox label="Timeline" value={stats.timeline} />
+            <StatBox label="Media + Docs" value={stats.photos + stats.videos + stats.documents} />
+          </CardContent>
+        </Card>
 
-      <div className="flex flex-wrap gap-2">
-        {tabItems.map((item) => (
-          <Button
-            key={item.key}
-            type="button"
-            size="sm"
-            variant={activeTab === item.key ? "default" : "outline"}
-            onClick={() => setActiveTab(item.key)}
-          >
-            {item.label}
-          </Button>
-        ))}
-      </div>
-      {activeTab === "settings" ? (
+        <Card>
+          <CardHeader className="space-y-1.5 pb-3">
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="size-5 text-primary" /> Sections
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Jump between admin tools.</p>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={tabQuery}
+                onChange={(event) => setTabQuery(event.target.value)}
+                className="pl-9"
+                placeholder="Search sections..."
+              />
+            </div>
+
+            <div className="grid gap-2">
+              {filteredTabs.map((item) => {
+                const meta = tabMeta[item.key];
+                const Icon = meta.icon;
+                const active = activeTab === item.key;
+
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => selectTab(item.key)}
+                    className={[
+                      "flex w-full items-start gap-3 rounded-2xl border px-3 py-2 text-left shadow-[var(--shadow-sm)] transition",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      active
+                        ? "border-primary/35 bg-primary/10"
+                        : "border-border/60 bg-background/60 hover:border-primary/25 hover:bg-muted/30"
+                    ].join(" ")}
+                  >
+                    <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl border border-border/60 bg-muted/30">
+                      <Icon className="size-4 text-primary" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold">{item.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{meta.description}</p>
+                    </div>
+                    {meta.count !== null ? (
+                      <Badge variant="outline" className="ml-auto">
+                        {meta.count}
+                      </Badge>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="space-y-1.5 pb-3">
+            <CardTitle>Quick Actions</CardTitle>
+            <p className="text-sm text-muted-foreground">Create new entries fast.</p>
+          </CardHeader>
+          <CardContent className="grid gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                resetProjectForm();
+                selectTab("projects");
+              }}
+            >
+              <Plus className="size-4" /> New Project
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                resetBlogForm();
+                selectTab("blog");
+              }}
+            >
+              <Plus className="size-4" /> New Blog Post
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                resetDocumentForm();
+                selectTab("documents");
+              }}
+            >
+              <Plus className="size-4" /> New PDF Document
+            </Button>
+
+            <a href="/" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}>
+              <ExternalLink className="size-4" /> Open Public Site
+            </a>
+          </CardContent>
+        </Card>
+      </aside>
+
+      <div className="space-y-6">
+        <div ref={mainTopRef} />
+        {activeTab === "settings" ? (
         <Card>
           <CardHeader>
             <CardTitle>Profile, Navigation, and Frontend Toggles</CardTitle>
@@ -1114,22 +1350,32 @@ export function AdminShellPreview() {
               </div>
 
               <div className="grid gap-3 md:grid-cols-2">
-                {Object.entries(controlsForm).map(([key, value]) => (
-                  <label key={key} className="flex items-center justify-between rounded-xl border border-border/60 bg-background/60 px-3 py-2">
-                    <span className="text-sm">{key}</span>
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-primary"
-                      checked={value}
-                      onChange={(event) =>
-                        setControlsForm((prev) => ({
-                          ...prev,
-                          [key]: event.target.checked
-                        }))
-                      }
-                    />
-                  </label>
-                ))}
+                {(Object.entries(controlsForm) as Array<[keyof FrontendControls, boolean]>).map(([key, value]) => {
+                  const meta = controlMeta[key];
+
+                  return (
+                    <label
+                      key={key}
+                      className="flex items-start justify-between gap-4 rounded-2xl border border-border/60 bg-background/60 p-3 shadow-[var(--shadow-sm)]"
+                    >
+                      <div className="space-y-0.5">
+                        <span className="text-sm font-semibold">{meta?.label ?? String(key)}</span>
+                        {meta?.description ? <span className="block text-xs text-muted-foreground">{meta.description}</span> : null}
+                      </div>
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-4 w-4 accent-primary"
+                        checked={value}
+                        onChange={(event) =>
+                          setControlsForm((prev) => ({
+                            ...prev,
+                            [key]: event.target.checked
+                          }))
+                        }
+                      />
+                    </label>
+                  );
+                })}
               </div>
 
               <div className="grid gap-4 lg:grid-cols-2">
@@ -1171,6 +1417,7 @@ export function AdminShellPreview() {
               formatUpdatedAt(item.updatedAt),
               <ActionButtons
                 key={`${item.id}-actions`}
+                viewHref={`/projects/${item.slug}`}
                 onEdit={() => onEditProject(item)}
                 onDelete={() => void onDeleteProject(item.id)}
               />
@@ -1248,7 +1495,12 @@ export function AdminShellPreview() {
               item.category,
               <StatusBadge key={`${item.id}-status`} status={item.status} />,
               formatUpdatedAt(item.updatedAt),
-              <ActionButtons key={`${item.id}-actions`} onEdit={() => onEditBlog(item)} onDelete={() => void onDeleteBlog(item.id)} />
+              <ActionButtons
+                key={`${item.id}-actions`}
+                viewHref={`/blog/${item.slug}`}
+                onEdit={() => onEditBlog(item)}
+                onDelete={() => void onDeleteBlog(item.id)}
+              />
             ])}
           />
           <form onSubmit={onSubmitBlog} className="space-y-3 rounded-xl border border-border/60 bg-background/60 p-4">
@@ -1418,7 +1670,12 @@ export function AdminShellPreview() {
               item.slug,
               <StatusBadge key={`${item.id}-status`} status={item.status} />,
               formatUpdatedAt(item.updatedAt),
-              <ActionButtons key={`${item.id}-actions`} onEdit={() => onEditPhoto(item)} onDelete={() => void onDeletePhoto(item.id)} />
+              <ActionButtons
+                key={`${item.id}-actions`}
+                viewHref={item.imageUrl}
+                onEdit={() => onEditPhoto(item)}
+                onDelete={() => void onDeletePhoto(item.id)}
+              />
             ])}
           />
 
@@ -1469,7 +1726,12 @@ export function AdminShellPreview() {
               item.source,
               <StatusBadge key={`${item.id}-status`} status={item.status} />,
               formatUpdatedAt(item.updatedAt),
-              <ActionButtons key={`${item.id}-actions`} onEdit={() => onEditVideo(item)} onDelete={() => void onDeleteVideo(item.id)} />
+              <ActionButtons
+                key={`${item.id}-actions`}
+                viewHref={item.videoUrl}
+                onEdit={() => onEditVideo(item)}
+                onDelete={() => void onDeleteVideo(item.id)}
+              />
             ])}
           />
 
@@ -1560,7 +1822,7 @@ export function AdminShellPreview() {
                 </div>
               ) : (
                 <span key={`${item.id}-file`} className="text-sm text-muted-foreground">
-                  —
+                  -
                 </span>
               ),
               <ActionButtons
@@ -1625,6 +1887,7 @@ export function AdminShellPreview() {
         </CrudShell>
       ) : null}
     </div>
+    </div>
   );
 }
 
@@ -1684,9 +1947,22 @@ function StatusBadge({ status }: { status: PublishStatus }) {
   return <Badge variant="outline">Draft</Badge>;
 }
 
-function ActionButtons({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+function ActionButtons({
+  onEdit,
+  onDelete,
+  viewHref
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+  viewHref?: string;
+}) {
   return (
     <div className="flex gap-2">
+      {viewHref ? (
+        <a href={viewHref} target="_blank" rel="noreferrer" className={buttonVariants({ size: "sm", variant: "outline" })}>
+          <ExternalLink className="size-3.5" /> View
+        </a>
+      ) : null}
       <Button type="button" size="sm" variant="outline" onClick={onEdit}>
         <Pencil className="size-3.5" /> Edit
       </Button>
@@ -1852,6 +2128,36 @@ function Field({
             </>
           ) : null}
       </div>
+
+      {upload && value.trim() ? (
+        <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-background/60 p-2 shadow-[var(--shadow-sm)]">
+          {upload.kind === "image" ? (
+            <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-border/60 bg-muted/30">
+              {/* Use <img> here so any pasted URL can preview without next/image domain config. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={value}
+                alt={`${label} preview`}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <div className="grid h-16 w-16 place-items-center rounded-lg border border-border/60 bg-muted/30 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              {upload.kind}
+            </div>
+          )}
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-medium">Current</p>
+            <p className="truncate text-[11px] text-muted-foreground">{value}</p>
+          </div>
+
+          <a href={value} target="_blank" rel="noreferrer" className={buttonVariants({ size: "sm", variant: "outline" })}>
+            <ExternalLink className="size-3.5" /> Open
+          </a>
+        </div>
+      ) : null}
 
       {upload && libraryOpen ? (
         <div className="absolute z-30 mt-2 w-full rounded-xl border border-border/70 bg-background p-3 shadow-xl">

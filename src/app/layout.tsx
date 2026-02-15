@@ -18,6 +18,8 @@ const spaceMono = Space_Mono({
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bigyan-svggithubio.vercel.app";
 const normalizedSiteUrl = (rawSiteUrl.startsWith("http") ? rawSiteUrl : `https://${rawSiteUrl}`).replace(/\/$/, "");
+const googleVerification =
+  process.env.GOOGLE_SITE_VERIFICATION || "3LG2Vgavi6ESfvRFI89FGokQRQh0nY0R_6w7QADI3XE";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -83,11 +85,9 @@ export const metadata: Metadata = {
       "max-video-preview": -1
     }
   },
-  verification: process.env.GOOGLE_SITE_VERIFICATION
-    ? {
-        google: process.env.GOOGLE_SITE_VERIFICATION
-      }
-    : undefined
+  verification: {
+    google: googleVerification
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
