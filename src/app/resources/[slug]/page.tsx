@@ -79,7 +79,7 @@ export default function ResourceDetailPage() {
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>If the embedded preview does not load (some hosts block iframes), use the Open button.</p>
             <p>
-              To add or update PDFs, go to <span className="font-medium text-foreground">Admin → Documents</span> and upload a PDF from your device.
+              To add or update PDFs, go to <span className="font-medium text-foreground">Admin -&gt; Documents</span> and upload a PDF from your device.
             </p>
           </CardContent>
         </Card>
@@ -87,4 +87,3 @@ export default function ResourceDetailPage() {
     </section>
   );
 }
-

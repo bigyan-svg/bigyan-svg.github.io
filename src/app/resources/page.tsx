@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { FileText, ExternalLink, Search } from "lucide-react";
+import { ExternalLink, FileText, Search, Sparkles } from "lucide-react";
 import { usePortfolioContent } from "@/components/content/content-provider";
 import { Reveal } from "@/components/effects/reveal";
 import { EmptyState } from "@/components/common/empty-state";
@@ -14,6 +14,15 @@ import { Input } from "@/components/ui/input";
 
 const typeFilters = ["All", "Resume", "Certificate", "Report", "Other"] as const;
 type TypeFilter = (typeof typeFilters)[number];
+
+function MetricCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-border/60 bg-background/60 p-4 shadow-[var(--shadow-md)] backdrop-blur">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold">{value}</p>
+    </div>
+  );
+}
 
 export default function ResourcesPage() {
   const {
@@ -36,13 +45,43 @@ export default function ResourcesPage() {
     });
   }, [pdfResources, query, type]);
 
+  const resourceTypeCount = useMemo(() => new Set(pdfResources.map((item) => item.type)).size, [pdfResources]);
+
   return (
     <section className="container pb-20 pt-16">
-      <SectionHeading
-        eyebrow="Resources"
-        title="PDFs you can preview in-browser"
-        description="Upload your resume, certificates, and reports from the admin dashboard. Visitors can preview them without leaving the site."
-      />
+      <Reveal>
+        <div className="relative overflow-hidden rounded-3xl border border-border/55 bg-[linear-gradient(135deg,hsl(var(--card)/0.92),hsl(var(--card)/0.62))] p-8 shadow-[var(--shadow-lg)] backdrop-blur-xl md:p-12">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,hsl(var(--primary)/0.16),transparent_55%),radial-gradient(circle_at_88%_14%,rgba(90,170,255,0.12),transparent_52%)]" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,rgba(20,90,210,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,90,210,0.18)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(circle_at_40%_0%,black,transparent_60%)]" />
+
+          <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+            <div className="space-y-5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary" className="inline-flex items-center gap-1 text-[10px]">
+                  <Sparkles className="size-3" />
+                  Resources
+                </Badge>
+                <Badge variant="outline" className="text-[10px]">
+                  In-browser previews
+                </Badge>
+              </div>
+
+              <SectionHeading
+                eyebrow="Documents"
+                title="PDFs you can preview in-browser"
+                description="Upload your resume, certificates, and reports from the admin dashboard. Visitors can preview them without leaving the site."
+              />
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <MetricCard label="PDFs" value={String(pdfResources.length)} />
+              <MetricCard label="Types" value={String(resourceTypeCount)} />
+              <MetricCard label="Now Showing" value={String(filtered.length)} />
+              <MetricCard label="Filter" value={type} />
+            </div>
+          </div>
+        </div>
+      </Reveal>
 
       <div className="mt-10 space-y-6">
         <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-background/60 p-4 backdrop-blur md:flex-row md:items-center md:justify-between">
@@ -67,7 +106,7 @@ export default function ResourcesPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <EmptyState title="No PDFs found" description="Try a different search term, or upload a new document from Admin → Documents." />
+          <EmptyState title="No PDFs found" description="Try a different search term, or upload a new document from Admin -> Documents." />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((item, index) => (
@@ -105,4 +144,3 @@ export default function ResourcesPage() {
     </section>
   );
 }
-
